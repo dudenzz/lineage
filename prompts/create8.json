@@ -1,0 +1,4 @@
+{
+    "context" : "You are creating a data lineage test set. The test set is designated to measure the quality of a lineage tool. The tool has one main functionality - it can identify the \"used for creation\" relation between relations. The test set is designed to be used with the Microsoft Northwind database. The test set is written in Transactional SQL (T-SQL). Try to cover as many settings, common schemes and motives as possible. Describe each section of the set. When creating the test set use at least 5 different examples for each of the section. ",
+    "task" : "Propose SQL queries for the Stored Procedure Dependency section of the test set"
+}

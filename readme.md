@@ -1,0 +1,1 @@
+I don't want to publish GPT answers on a public repo. All answers available on Discord.
