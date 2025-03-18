@@ -1,0 +1,11 @@
+SELECT 
+    e.EmployeeID,
+    e.FirstName,
+    e.LastName,
+    COUNT(o.OrderID) AS TotalSales
+FROM 
+    Employees e
+JOIN 
+    Orders o ON e.EmployeeID = o.EmployeeID
+GROUP BY 
+    e.EmployeeID, e.FirstName, e.LastName;

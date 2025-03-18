@@ -1,0 +1,81 @@
+--- Global structures for storing DataLineage data
+IF OBJECT_ID('dbo.DataLineage', 'U') IS NOT NULL 
+  DROP TABLE dbo.DataLineage; 
+CREATE TABLE DataLineage 
+(
+
+	SourceName VARCHAR(255),
+	SourcePKName VARCHAR(255),
+    SourceID VARCHAR(255), 
+	TargetName VARCHAR(255),
+	TargetPKName VARCHAR(255),
+    TargetID VARCHAR(255)
+)
+GO
+
+
+--- data dummies for structures which cannot identify its members
+IF OBJECT_ID('dbo.EmployeeSalesViewDummy', 'U') IS NOT NULL 
+  DROP TABLE dbo.EmployeeSalesViewDummy; 
+SELECT 
+    TOP 0 
+    e.EmployeeID,
+    e.FirstName,
+    e.LastName,
+    COUNT(o.OrderID) AS TotalSales INTO EmployeeSalesViewDummy
+FROM 
+    Employees e
+JOIN 
+    Orders o ON e.EmployeeID = o.EmployeeID
+GROUP BY 
+    e.EmployeeID, e.FirstName, e.LastName;
+
+--- add lineage identifiers to data dummies
+ALTER TABLE EmployeeSalesViewDummy ADD GlobalID decimal;
+
+--imitate the schema with use of cursors, in order to store data lineage
+DECLARE @empID VARCHAR(255);
+DECLARE @orderID VARCHAR(255);
+DECLARE @empFName VARCHAR(255);
+DECLARE @empLName VARCHAR(255);
+DECLARE @TotSales VARCHAR(255);
+DECLARE @nextGlobID VARCHAR(255);
+DECLARE 
+SalesSummaryViewCursor CURSOR FOR
+SELECT 
+    e.EmployeeID,
+    e.FirstName,
+    e.LastName,
+    COUNT(o.OrderID) AS TotalSales
+FROM 
+    Employees e
+JOIN 
+    Orders o ON e.EmployeeID = o.EmployeeID
+GROUP BY 
+    e.EmployeeID, e.FirstName, e.LastName;
+ 
+OPEN SalesSummaryViewCursor
+FETCH NEXT FROM SalesSummaryViewCursor INTO @empID, @empFName, @empLName, @TotSales
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+ 
+ SELECT @nextGlobID = NEXT VALUE FOR GlobalID4ViewSequence;
+ INSERT INTO DataLineage VALUES('Employees','EmployeeID',@empID,'EmployeeSalesViewDummy','GlobalID',@nextGlobID);
+ INSERT INTO EmployeeSalesViewDummy Values(@empID, @empFName, @empLName, @TotSales, @nextGlobID );
+ DECLARE OrdersForEmployee CURSOR FOR
+ SELECT OrderID from Orders WHERE EmployeeID = @empID;
+ OPEN OrdersForEmployee 
+ FETCH NEXT FROM OrdersForEmployee INTO @orderID;
+ WHILE @@FETCH_STATUS = 0 
+ BEGIN
+	
+	INSERT INTO DataLineage VALUES('Orders','OrderID',@orderID,'EmployeeSalesViewDummy','GlobalID',@nextGlobID);
+	FETCH NEXT FROM OrdersForEmployee INTO @orderID;
+ END; 
+ CLOSE OrdersForEmployee;
+ DEALLOCATE OrdersForEmployee;
+ FETCH NEXT FROM SalesSummaryViewCursor INTO @empID, @empFName, @empLName, @TotSales;
+END;
+CLOSE SalesSummaryViewCursor;
+DEALLOCATE SalesSummaryViewCursor;
+
