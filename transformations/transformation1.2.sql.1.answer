@@ -1,0 +1,163 @@
+```sql
+-- Reusing global structures for storing DataLineage information
+IF OBJECT_ID('dbo.DataLineage', 'U') IS NOT NULL 
+  DROP TABLE dbo.DataLineage; 
+CREATE TABLE DataLineage 
+(
+    SourceName VARCHAR(255),
+    SourcePKName VARCHAR(255),
+    SourceID VARCHAR(255), 
+    TargetName VARCHAR(255),
+    TargetPKName VARCHAR(255),
+    TargetID VARCHAR(255)
+)
+GO 
+DROP SEQUENCE IF EXISTS dbo.GlobalIDSequence;
+CREATE SEQUENCE GlobalIDSequence 
+	START WITH 1
+	INCREMENT BY 1
+GO
+
+-- Step 1: Create an Initial View with Lineage Tracking
+GO 
+DECLARE @orderID VARCHAR(255);
+DECLARE @productID VARCHAR(255);
+DECLARE @quantity VARCHAR(255);
+DECLARE @nextGlobID VARCHAR(255);
+
+DECLARE OrderDetailsViewCursor CURSOR FOR
+SELECT OrderID, ProductID, Quantity
+FROM [Order Details];
+
+OPEN OrderDetailsViewCursor
+FETCH NEXT FROM OrderDetailsViewCursor INTO @orderID, @productID, @quantity
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+    SELECT @nextGlobID = NEXT VALUE FOR GlobalIDSequence;
+    -- Record lineage for creating OrderDetailsDummy
+    INSERT INTO DataLineage VALUES('[Order Details]', 'OrderID', @orderID, 'OrderDetailsDummy', 'GlobalID', @nextGlobID);
+    FETCH NEXT FROM OrderDetailsViewCursor INTO @orderID, @productID, @quantity;
+END;
+CLOSE OrderDetailsViewCursor;
+DEALLOCATE OrderDetailsViewCursor;
+
+-- Dummy table for intermediate storage
+IF OBJECT_ID('dbo.OrderDetailsDummy', 'U') IS NOT NULL 
+  DROP TABLE dbo.OrderDetailsDummy; 
+SELECT TOP 0 
+    OrderID, ProductID, Quantity
+INTO OrderDetailsDummy
+FROM [Order Details];
+ALTER TABLE OrderDetailsDummy ADD GlobalID VARCHAR(255);
+SET IDENTITY_INSERT OrderDetailsDummy ON;
+
+DECLARE @dummyID VARCHAR(255);
+DECLARE OrderDetailsInsertCursor CURSOR FOR
+SELECT OrderID, ProductID, Quantity
+FROM [Order Details];
+
+OPEN OrderDetailsInsertCursor
+FETCH NEXT FROM OrderDetailsInsertCursor INTO @orderID, @productID, @quantity
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+    SELECT @nextGlobID = NEXT VALUE FOR GlobalIDSequence;
+    INSERT INTO OrderDetailsDummy (OrderID, ProductID, Quantity, GlobalID)
+    VALUES(@orderID, @productID, @quantity, @nextGlobID);
+    FETCH NEXT FROM OrderDetailsInsertCursor INTO @orderID, @productID, @quantity;
+END;
+CLOSE OrderDetailsInsertCursor;
+DEALLOCATE OrderDetailsInsertCursor;
+GO
+
+-- Step 2: Create OrderSummary Table with Lineage Tracking
+GO
+IF OBJECT_ID('dbo.OrderSummary', 'U') IS NOT NULL 
+  DROP TABLE dbo.OrderSummary; 
+
+DECLARE @totalQuantity VARCHAR(255);
+DECLARE OrderSummaryCursor CURSOR FOR
+SELECT OrderID, SUM(Quantity) AS TotalQuantity
+FROM OrderDetailsDummy
+GROUP BY OrderID;
+
+OPEN OrderSummaryCursor
+FETCH NEXT FROM OrderSummaryCursor INTO @orderID, @totalQuantity
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SELECT @nextGlobID = NEXT VALUE FOR GlobalIDSequence;
+    INSERT INTO OrderSummary (OrderID, TotalQuantity)
+    VALUES(@orderID, @totalQuantity);
+    INSERT INTO DataLineage VALUES('OrderDetailsDummy', 'OrderID', @orderID, 'OrderSummary', 'OrderID', @orderID);
+    FETCH NEXT FROM OrderSummaryCursor INTO @orderID, @totalQuantity;
+END;
+CLOSE OrderSummaryCursor;
+DEALLOCATE OrderSummaryCursor;
+GO
+
+-- Step 3: Create Temp Table with Lineage Tracking
+GO
+CREATE OR ALTER PROCEDURE CreateTempTableWithLineage AS
+BEGIN
+    DECLARE @orderID VARCHAR(255);
+	DECLARE @totalQuantity VARCHAR(255);
+	DECLARE @nextGlobID VARCHAR(255);
+
+	DECLARE TempCursor CURSOR FOR
+	SELECT OrderID, TotalQuantity FROM OrderSummary;
+
+	OPEN TempCursor
+	FETCH NEXT FROM TempCursor INTO @orderID, @totalQuantity
+
+	IF OBJECT_ID('tempdb..##TempOrderSummary', 'U') IS NOT NULL 
+		DROP TABLE ##TempOrderSummary;
+	CREATE TABLE ##TempOrderSummary (OrderID VARCHAR(255), TotalQuantity VARCHAR(255), GlobalID VARCHAR(255));
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SELECT @nextGlobID = NEXT VALUE FOR GlobalIDSequence;
+		INSERT INTO ##TempOrderSummary (OrderID, TotalQuantity, GlobalID)
+		VALUES(@orderID, @totalQuantity, @nextGlobID);
+		INSERT INTO DataLineage VALUES('OrderSummary', 'OrderID', @orderID, '##TempOrderSummary', 'GlobalID', @nextGlobID);
+		FETCH NEXT FROM TempCursor INTO @orderID, @totalQuantity;
+	END;
+	CLOSE TempCursor;
+	DEALLOCATE TempCursor;
+END;
+GO
+EXEC CreateTempTableWithLineage;
+
+-- Step 4: Create Final Table with Lineage Tracking
+GO
+CREATE OR ALTER PROCEDURE FinalizeOrderSummaryWithLineage AS
+BEGIN
+	DECLARE @orderID VARCHAR(255);
+	DECLARE @totalQuantity VARCHAR(255);
+	DECLARE @nextGlobID VARCHAR(255);
+
+	DECLARE FinalCursor CURSOR FOR
+	SELECT OrderID, TotalQuantity, GlobalID FROM ##TempOrderSummary;
+
+	OPEN FinalCursor
+	FETCH NEXT FROM FinalCursor INTO @orderID, @totalQuantity, @nextGlobID
+
+	IF OBJECT_ID('dbo.FinalOrderSummary', 'U') IS NOT NULL 
+	  DROP TABLE FinalOrderSummary;
+
+	CREATE TABLE FinalOrderSummary (OrderID VARCHAR(255), TotalQuantity VARCHAR(255), GlobalID VARCHAR(255));
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		INSERT INTO FinalOrderSummary (OrderID, TotalQuantity, GlobalID)
+		VALUES(@orderID, @totalQuantity, @nextGlobID);
+		INSERT INTO DataLineage VALUES('##TempOrderSummary', 'GlobalID', @nextGlobID, 'FinalOrderSummary', 'OrderID', @orderID);
+		FETCH NEXT FROM FinalCursor INTO @orderID, @totalQuantity, @nextGlobID;
+	END;
+	CLOSE FinalCursor;
+	DEALLOCATE FinalCursor;
+END;
+GO
+EXEC FinalizeOrderSummaryWithLineage;
+```

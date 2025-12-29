@@ -35,6 +35,8 @@ EXEC CreateTempTable;
 GO 
 CREATE OR ALTER PROCEDURE FinalizeOrderSummary AS
 BEGIN
+	IF OBJECT_ID('dbo.FinalOrderSummary', 'U') IS NOT NULL 
+	  DROP TABLE FinalOrderSummary; 
     -- Create the final table from the temporary table
     SELECT * INTO FinalOrderSummary FROM ##TempOrderSummary;
 END;

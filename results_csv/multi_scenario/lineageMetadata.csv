@@ -1,0 +1,15 @@
+Data source;Data target;Count
+OrderSummary;##TempOrderSummary;830
+[Order Details];vw_OrderTotals;830
+##TempOrderSummary;FinalOrderDetails;830
+vw_OrderTotals;Table_OrderCategories;830
+vw_OrderFulfillment;Table_FulfillmentLeads;830
+##TempHighValue;Final_HighValueReport;419
+Customers;vw_OrderFulfillment;830
+Shippers;vw_OrderFulfillment;830
+OrderDetailsDummy;OrderSummary;830
+Orders;vw_OrderFulfillment;830
+Orders;OrderDetailsDummy;830
+Table_OrderCategories;##TempHighValue;419
+Table_FulfillmentLeads;##TempAtRisk;68
+##TempAtRisk;Final_AtRiskLog;68

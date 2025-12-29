@@ -22,10 +22,10 @@ with open('prompts/transform.json','r') as json_file:
             data = json.load(json_file)
             context = data['context']
             task = data['task']
-            code = open('src/SQL_scripts/transformation1.1.sql').read()
-            sample_input = open('examples/example1.transformation').read()
-            sample_output = open('examples/example1.lineage_adaptation').read()
-            name = path.basename('src/SQL_scripts/transformation1.1.sql')
-            transform_prompt = Prompt(context, task, code, sample_input, sample_output, name)
+            code = open('src/SQL_scripts/transformation1.2.sql').read()
+            sample_input = open('examples/example.1.1.transformation').read()
+            sample_output = open('examples/example.1.1.lineage_adaptation').read()
+            name = path.basename('src/SQL_scripts/transformation1.2.sql')
+            transform_prompt = Prompt(context, task, sample_input, sample_output, code, name)
             transform_prompt.prompt_with_code(client)
             transform_prompt.save_transformed()
