@@ -1,0 +1,14 @@
+P OrdersLog lineage TempOrders 0.9
+P Orders lineage OrdersLog 0.8
+N Orders lineage Products 0.8
+P TempOrders lineage FinalOrders 0.7
+P OrderDetails lineage Orders 0.6
+N Products lineage TempOrders 0.5
+N TempOrders lineage Customers 0.3
+N Orders lineage Customers 0.1
+
+Hits@4 = 0.75
+Hits@5 = 0.8
+Hits@6 = 4/6
+...
+

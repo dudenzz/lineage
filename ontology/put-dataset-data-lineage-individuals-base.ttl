@@ -1,0 +1,256 @@
+@prefix : <http://www.semanticweb.org/put/database-data-lineage/> .
+@prefix dsd: <https://w3id.org/dsd#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix put-ddl: <http://www.semanticweb.org/put/database-data-lineage/> .
+@base <http://www.semanticweb.org/put/database-data-lineage/> .
+
+<http://www.semanticweb.org/put/database-data-lineage> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/put/database-data-lineage#belongsToColumn
+:belongsToColumn rdf:type owl:ObjectProperty ;
+                 owl:inverseOf :hasInstance ;
+                 rdfs:domain put-ddl:CellValue ;
+                 rdfs:range put-ddl:Column .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#columnDerivedFrom
+:columnDerivedFrom rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf prov:wasDerivedFrom ;
+                   rdfs:domain put-ddl:Column ;
+                   rdfs:range put-ddl:Column .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#hasCellValue
+:hasCellValue rdf:type owl:ObjectProperty ;
+              rdfs:domain put-ddl:Row ;
+              rdfs:range put-ddl:CellValue .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#hasColumn
+:hasColumn rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf dsd:hasAttribute ;
+           owl:inverseOf :isColumnOf ;
+           rdfs:domain put-ddl:Table ;
+           rdfs:range put-ddl:Column .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#hasInstance
+:hasInstance rdf:type owl:ObjectProperty ;
+             rdfs:domain put-ddl:Column ;
+             rdfs:range put-ddl:CellValue .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#hasRow
+:hasRow rdf:type owl:ObjectProperty ;
+        rdfs:subPropertyOf csvw:row ;
+        rdfs:domain put-ddl:Table ;
+        rdfs:range put-ddl:Row .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#isColumnOf
+:isColumnOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf dsd:isAttributeOf ;
+            rdfs:domain put-ddl:Column ;
+            rdfs:range put-ddl:Table .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#valueDerivedFrom
+:valueDerivedFrom rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf prov:wasDerivedFrom ;
+                  rdfs:domain put-ddl:CellValue ;
+                  rdfs:range put-ddl:CellValue .
+
+###  http://www.semanticweb.org/put/database-data-lineage#rowDerivedFrom
+:rowDerivedFrom rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf prov:wasDerivedFrom ;
+                  rdfs:domain put-ddl:Row ;
+                  rdfs:range put-ddl:Row .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/hasDatatype
+put-ddl:hasDatatype rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf csvw:datatype ;
+                    rdfs:domain put-ddl:Column ;
+                    rdfs:range :DataType .
+
+
+###  http://www.w3.org/ns/csvw#datatype
+csvw:datatype rdf:type owl:ObjectProperty ;
+              rdfs:domain <http://w3c.github.io/csvw/ns/Column> ;
+              rdfs:range csvw:Datatype ;
+              rdfs:label "csvw:datatype" .
+
+
+###  http://www.w3.org/ns/csvw#row
+csvw:row rdf:type owl:ObjectProperty ;
+         rdfs:domain <http://w3c.github.io/csvw/ns/Table> ;
+         rdfs:range <http://w3c.github.io/csvw/ns/Row> ;
+         rdfs:label "csvw:row" .
+
+
+###  http://www.w3.org/ns/prov#wasDerivedFrom
+prov:wasDerivedFrom rdf:type owl:ObjectProperty ,
+                             owl:TransitiveProperty ;
+                    rdfs:label "prov:wasDerivedFrom" .
+
+
+###  https://w3id.org/dsd#hasAttribute
+dsd:hasAttribute rdf:type owl:ObjectProperty ;
+                 owl:inverseOf dsd:isAttributeOf ;
+                 rdfs:domain dsd:Concept ;
+                 rdfs:range dsd:Attribute ;
+                 rdfs:label "dsd:hasAttribute" .
+
+
+###  https://w3id.org/dsd#isAttributeOf
+dsd:isAttributeOf rdf:type owl:ObjectProperty ;
+                  rdfs:domain dsd:Attribute ;
+                  rdfs:range dsd:Concept ;
+                  rdfs:label "dsd:isAttributeOf" .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/put/database-data-lineage#rownum
+:rownum rdf:type owl:DatatypeProperty ;
+        rdfs:subPropertyOf <http://www/w3/org/ns/csvw#rownum> ;
+        rdfs:domain put-ddl:Row ;
+        rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/datatypeName
+put-ddl:datatypeName rdf:type owl:DatatypeProperty ;
+                     rdfs:domain :DataType ;
+                     rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/exactValue
+put-ddl:exactValue rdf:type owl:DatatypeProperty ;
+                   rdfs:domain put-ddl:CellValue ;
+                   rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/name
+put-ddl:name rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf csvw:name ;
+             rdfs:domain put-ddl:Column ;
+             rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/title
+put-ddl:title rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf csvw:title ;
+              rdfs:domain put-ddl:Table ;
+              rdfs:range xsd:string .
+
+
+###  http://www.w3.org/ns/csvw#name
+csvw:name rdf:type owl:DatatypeProperty ;
+          rdfs:domain <http://w3c.github.io/csvw/ns/Column> ;
+          rdfs:range xsd:string ;
+          rdfs:label "csvw:name" .
+
+
+###  http://www.w3.org/ns/csvw#title
+csvw:title rdf:type owl:DatatypeProperty ;
+           rdfs:domain <http://w3c.github.io/csvw/ns/Table> ;
+           rdfs:range xsd:string ;
+           rdfs:label "csvw:title" .
+
+
+###  http://www/w3/org/ns/csvw#rownum
+<http://www/w3/org/ns/csvw#rownum> rdf:type owl:DatatypeProperty ;
+                                   rdfs:domain <http://w3c.github.io/csvw/ns/Row> ;
+                                   rdfs:range xsd:integer ;
+                                   rdfs:label "csvw:rownum" .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://w3c.github.io/csvw/ns/Cell
+<http://w3c.github.io/csvw/ns/Cell> rdf:type owl:Class ;
+                                    rdfs:label "csvw:Cell" .
+
+
+###  http://w3c.github.io/csvw/ns/Column
+<http://w3c.github.io/csvw/ns/Column> rdf:type owl:Class ;
+                                      rdfs:label "csvw:Column" .
+
+
+###  http://w3c.github.io/csvw/ns/Row
+<http://w3c.github.io/csvw/ns/Row> rdf:type owl:Class ;
+                                   rdfs:label "csvw:Row" .
+
+
+###  http://w3c.github.io/csvw/ns/Table
+<http://w3c.github.io/csvw/ns/Table> rdf:type owl:Class ;
+                                     rdfs:label "csvw:Table" .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage#DataType
+:DataType rdf:type owl:Class ;
+          rdfs:subClassOf put-ddl:DatabaseDataLineageConcept ,
+                          csvw:Datatype .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/CellValue
+put-ddl:CellValue rdf:type owl:Class ;
+                  rdfs:subClassOf <http://w3c.github.io/csvw/ns/Cell> ,
+                                  put-ddl:DatabaseDataLineageConcept .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/Column
+put-ddl:Column rdf:type owl:Class ;
+               rdfs:subClassOf <http://w3c.github.io/csvw/ns/Column> ,
+                               put-ddl:DatabaseDataLineageConcept ,
+                               dsd:Attribute .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/DatabaseDataLineageConcept
+put-ddl:DatabaseDataLineageConcept rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/Row
+put-ddl:Row rdf:type owl:Class ;
+            rdfs:subClassOf <http://w3c.github.io/csvw/ns/Row> ,
+                            put-ddl:DatabaseDataLineageConcept .
+
+
+###  http://www.semanticweb.org/put/database-data-lineage/Table
+put-ddl:Table rdf:type owl:Class ;
+              rdfs:subClassOf <http://w3c.github.io/csvw/ns/Table> ,
+                              put-ddl:DatabaseDataLineageConcept ,
+                              dsd:Concept .
+
+
+###  http://www.w3.org/ns/csvw#Datatype
+csvw:Datatype rdf:type owl:Class ;
+              rdfs:label "csvw:DataType" .
+
+
+###  https://w3id.org/dsd#Attribute
+dsd:Attribute rdf:type owl:Class ;
+              rdfs:label "dsd:Attribute" .
+
+
+###  https://w3id.org/dsd#Concept
+dsd:Concept rdf:type owl:Class ;
+            rdfs:label "dsd:Concept" .
+
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
