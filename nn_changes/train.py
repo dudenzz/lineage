@@ -741,11 +741,11 @@ if __name__ == "__main__":
     path_out_vect = layers.Dense(300, activation='tanh')(dropout)
     
     #remove the time dimension from the output embd since there is only one step
-    rela_out_embd = layers.Lambda(lambda t: get_sum,output_shape = (300,))(rela_embd)
+    rela_out_embd = layers.Lambda(get_sum,output_shape = (300,))(rela_embd)
     
     # Normalize the vectors to have unit length
-    path_out_vect_norm = layers.Lambda(lambda t: l2norm,output_shape = (300,))(path_out_vect)
-    rela_out_embd_norm = layers.Lambda(lambda t: l2norm,output_shape = (300,))(rela_out_embd)
+    path_out_vect_norm = layers.Lambda(l2norm,output_shape = (300,))(path_out_vect)
+    rela_out_embd_norm = layers.Lambda(l2norm,output_shape = (300,))(rela_out_embd)
     
     # Calculate the dot product
     dot_product = layers.Dot(axes=-1)([path_out_vect_norm, rela_out_embd_norm])
