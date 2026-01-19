@@ -24,6 +24,13 @@ tf.get_logger().setLevel('ERROR')
 def get_max(t):
     import tensorflow as tf
     return tf.reduce_max(t, axis=1)
+def get_sum(t):
+    import tensorflow as tf
+    return tf.reduce_sum(t, axis=1)
+def l2norm(t):
+    import tensorflow as tf
+    return tf.math.l2_normalize(t, axis=1)
+
 ##################################
 ####functions/classes#############
 class LoadKG:
@@ -734,11 +741,11 @@ if __name__ == "__main__":
     path_out_vect = layers.Dense(300, activation='tanh')(dropout)
     
     #remove the time dimension from the output embd since there is only one step
-    rela_out_embd = layers.Lambda(lambda t: tf.reduce_sum(t, axis=1),output_shape = (300,))(rela_embd)
+    rela_out_embd = layers.Lambda(lambda t: get_sum,output_shape = (300,))(rela_embd)
     
     # Normalize the vectors to have unit length
-    path_out_vect_norm = layers.Lambda(lambda t: tf.math.l2_normalize(t, axis=-1),output_shape = (300,))(path_out_vect)
-    rela_out_embd_norm = layers.Lambda(lambda t: tf.math.l2_normalize(t, axis=-1),output_shape = (300,))(rela_out_embd)
+    path_out_vect_norm = layers.Lambda(lambda t: l2norm,output_shape = (300,))(path_out_vect)
+    rela_out_embd_norm = layers.Lambda(lambda t: l2norm,output_shape = (300,))(rela_out_embd)
     
     # Calculate the dot product
     dot_product = layers.Dot(axes=-1)([path_out_vect_norm, rela_out_embd_norm])
@@ -853,8 +860,8 @@ if __name__ == "__main__":
     rela_out_embd_ = layers.Lambda(get_max,output_shape = (300,))(rela_embd_)
     
     # Normalize the vectors to have unit length
-    out_vect_norm = layers.Lambda(lambda t:tf.math.l2_normalize(t, axis=-1),output_shape = (300,))(out_vect)
-    rela_out_embd_norm_ = layers.Lambda(lambda t:tf.math.l2_normalize(t, axis=-1),output_shape = (300,))(rela_out_embd_)
+    out_vect_norm = layers.Lambda(l2norm,output_shape = (300,))(out_vect)
+    rela_out_embd_norm_ = layers.Lambda(l2norm,output_shape = (300,))(rela_out_embd_)
 
     
     # Calculate the dot product

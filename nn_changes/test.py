@@ -23,6 +23,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def get_max(t):
     import tensorflow as tf
     return tf.reduce_max(t, axis=1)
+def get_sum(t):
+    import tensorflow as tf
+    return tf.reduce_sum(t, axis=1)
+def l2norm(t):
+    import tensorflow as tf
+    return tf.math.l2_normalize(t, axis=1)
+
+
 class LoadKG:
     
     def __init__(self):
@@ -647,13 +655,17 @@ if __name__ == "__main__":
     keras.config.enable_unsafe_deserialization()
     #load the model
     model = keras.models.load_model('./weight_bin/' + model_name_ + '.h5', safe_mode=False,     custom_objects={
-        'get_max': get_max
+        'get_max': get_max,
+        'get_sum': get_sum,
+        'l2norm': l2norm
     })
 
 
     #load the one-hop neighbor model
     model_2 = keras.models.load_model('./weight_bin/' + one_hop_model_name + '.h5', safe_mode=False,     custom_objects={
-        'get_max': get_max
+        'get_max': get_max,
+        'get_sum': get_sum,
+        'l2norm': l2norm
     })
 
     ind_train_path = './data/' + data_name + '_ind/train.txt'
