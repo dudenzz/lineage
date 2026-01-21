@@ -72,24 +72,33 @@ def create_csv_data(target_directory, test_directory = None):
         view_file.close()
     connection.close()
 
-def create_training_files(ontology, file):
-    data_file = open(f'SiaILP/data/lineage/{file}.txt','w+')
+def create_training_files(ontology, inductive = False):
+    train_file = open(f'SiaILP/data/lineage{'_ind' if inductive else ''}/train.txt','w+')
+    test_file = open(f'SiaILP/data/lineage{'_ind' if inductive else ''}/test.txt','w+')
+    validation_file = open(f'SiaILP/data/lineage{'_ind' if inductive else ''}/valid.txt','w+')
     for individual in ontology.individuals():
         for prop in individual.get_properties():
             for value in prop[individual]:
-                value_str = str(value)
+                if(hasattr(value,'name')):
+                    value_str = value.name
+                else:
+                    value_str = str(value)
                 value_str = value_str.replace(' ','_')
                 value_str = value_str.replace('put-dataset-data-lineage-individuals-base.','')
                 value_str = value_str.replace('training_files\\train_kg.','')
                 value_str = value_str.replace('training_files\\test_kg.','')
-                rng = random.random()
-                if file == 'train' and rng < 0.1:
-                    data_file.write(f"{individual.name}\t{prop.python_name}\t{value_str}\n")
-                elif file == 'test':# and rng < 0.6 and 'derived' in prop.python_name.lower():
-                    data_file.write(f"{individual.name}\t{prop.python_name}\t{value_str}\n")
-                elif file == 'valid' and 'derived' in prop.python_name.lower():
-                    data_file.write(f"{individual.name}\t{prop.python_name}\t{value_str}\n")
-    data_file.close()
+                individual_name = 'ind_' + individual.name if inductive else individual.name
+                value_name = 'ind_' + value_str if inductive else value_str
+                rng = random.random() 
+                if rng < 0.8:
+                    train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                elif rng < 0.9:
+                    test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                else:
+                    validation_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+    train_file.close()
+    test_file.close()
+    validation_file.close()
 
 
 def main():
@@ -126,10 +135,10 @@ def main():
             ontology.save(os.path.join(csv_nn_directory, 'test_kg.rdf'))
         elif option == '7':
             ontology = knowledge_graph.load_ontology(os.path.join(csv_nn_directory, 'train_kg.rdf'))
-            create_training_files(ontology,'train')
+            create_training_files(ontology,False)
         elif option == '8':
             ontology = knowledge_graph.load_ontology(os.path.join(csv_nn_directory, 'test_kg.rdf'))
-            create_training_files(ontology,'test')
+            create_training_files(ontology,True)
         elif option == '9':
             ontology = knowledge_graph.load_ontology(os.path.join(csv_nn_directory, 'train_kg.rdf'))
             create_training_files(ontology,'valid')

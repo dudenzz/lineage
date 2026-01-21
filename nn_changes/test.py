@@ -212,13 +212,9 @@ class ObtainPathsByDynamicProgramming:
         
         #under this mode, we will consider any entity
         elif mode == 'any_target':
-            
             for s_any in one_hop:
-                
-                qualified_t.add(s_any)
-                
-        else:
-            
+                qualified_t.add(s_any)   
+        else:    
             raise ValueError('not a valid mode')
         
         '''
