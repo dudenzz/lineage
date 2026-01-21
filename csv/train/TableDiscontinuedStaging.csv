@@ -1,1 +1,1 @@
-StageID;OriginalProductID;ProductLabel<class 'int'>;<class 'int'>;<class 'str'>142;5;Chef Anton's Gumbo Mix143;9;Mishi Kobe Niku144;17;Alice Mutton145;24;Guaraná Fantástica146;28;Rössle Sauerkraut147;29;Thüringer Rostbratwurst148;42;Singaporean Hokkien Fried Mee149;53;Perth Pasties
+StageID;OriginalProductID;ProductLabel<class 'int'>;<class 'int'>;<class 'str'>1;5;Chef Anton's Gumbo Mix2;9;Mishi Kobe Niku3;17;Alice Mutton4;24;Guaraná Fantástica5;28;Rössle Sauerkraut6;29;Thüringer Rostbratwurst7;42;Singaporean Hokkien Fried Mee8;53;Perth Pasties

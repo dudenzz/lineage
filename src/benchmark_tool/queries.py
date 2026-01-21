@@ -1,7 +1,10 @@
 from config import db_database
 from os import getcwd
-drop_database = f"DROP DATABASE IF EXISTS {db_database}"
-
+drop_database = f"""IF EXISTS (SELECT name from sys.databases WHERE (name = '{db_database}'))
+    BEGIN
+        ALTER DATABASE {db_database} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+        DROP DATABASE {db_database};
+    END;"""
 create_database = f"""
 CREATE DATABASE {db_database} ON
 (NAME = Sales_dat,
