@@ -1,6 +1,7 @@
 secret
 venv/
 .venv/
+linux-venv/
 answers/*.answer
 src/__pycache__/
 SiaILP/

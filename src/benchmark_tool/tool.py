@@ -87,15 +87,20 @@ def create_training_files(ontology, inductive = False):
                 value_str = value_str.replace('put-dataset-data-lineage-individuals-base.','')
                 value_str = value_str.replace('training_files\\train_kg.','')
                 value_str = value_str.replace('training_files\\test_kg.','')
-                individual_name = 'ind_' + individual.name if inductive else individual.name
-                value_name = 'ind_' + value_str if inductive else value_str
+                individual_name = 'ind_' + individual.name if inductive else 'orig_' + individual.name
+                value_name = 'ind_' + value_str if inductive else 'orig_' + value_str
                 rng = random.random() 
-                if rng < 0.8:
-                    train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
-                elif rng < 0.9:
-                    test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
-                else:
-                    validation_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                # if rng < 0.9 : continue
+                rng = random.random() 
+
+                train_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
+                train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+
+                test_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
+                test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+
+                validation_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
+                validation_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
     train_file.close()
     test_file.close()
     validation_file.close()

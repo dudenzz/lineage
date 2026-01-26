@@ -1,4 +1,4 @@
-db_hostname = "DESKTOP-NCJNMHC\\SQLEXPRESS"
+db_hostname = "DESKTOP-AHFJQ66\\SQLEXPRESS"
 db_database = "Lineage"
 db_directory = "databases"
 db_service = "MSSQL$SQLEXPRESS"

@@ -1,0 +1,313 @@
+flowchart TD
+
+
+    %% Scenario 15: Employee Hierarchy
+    %% subgraph Scenario_15 [Scenario 15: Supervision Audit Flow]
+    %%     direction TB
+        
+    %%     %% Nodes
+    %%     E15_Sub[Employees: Subordinate]
+    %%     E15_Mgr[Employees: Manager]
+    %%     V15[vw_EmployeeHierarchy]
+    %%     T15[Table_SupervisionStaging]
+    %%     B15(##TempSupervisionBuffer)
+    %%     R15[Final_SupervisionAudit]
+
+    %%     %% Flow
+    %%     E15_Sub -->|JOIN| V15
+    %%     E15_Mgr -.->|Join| V15
+    %%     V15 -->|ISNULL: TOP LEVEL| T15
+    %%     T15 -->|WHERE Supervisor <> 'TOP LEVEL'| B15
+    %%     B15 -->|ReportingLine Concat| R15
+    %% end
+
+
+    %% %% Scenario 14: Product-Supplier Integrity
+    %% subgraph Scenario_14 [Scenario 14: Supply Chain Audit Flow]
+    %%     direction TB
+        
+    %%     %% Nodes
+    %%     E14_1[Products]
+    %%     E14_2[Suppliers]
+    %%     V14[vw_ProductSupplierMatch]
+    %%     T14[Table_SupplyChainStaging]
+    %%     B14(##TempIntegrityBuffer)
+    %%     R14[Final_SupplyChainAudit]
+
+    %%     %% Flow
+    %%     E14_1 -->|LEFT OUTER JOIN| V14
+    %%     E14_2 -.->|Optional Source| V14
+    %%     V14 -->|CASE: If Supplier NULL| T14
+    %%     T14 -->|WHERE Status LIKE 'ORPHAN%'| B14
+    %%     B14 -->|Final Audit Mapping| R14
+    %% end
+
+
+    %% %% Scenario 13: Product Full Catalog
+    %% subgraph Scenario_13 [Scenario 3: Procurement Audit]
+    %%     direction TB
+        
+    %%     %% Nodes
+    %%     E13_1[Products]
+    %%     E13_2[Categories]
+    %%     E13_3[Suppliers]
+    %%     V13[vw_ProductFullCatalog]
+    %%     T13[Table_InventoryStaging]
+    %%     B13(##TempProcurementBuffer)
+    %%     R13[Final_ProcurementAudit]
+
+    %%     %% Flow
+    %%     E13_1 -->|JOIN| V13
+    %%     E13_2 -->|JOIN| V13
+    %%     E13_3 -->|JOIN| V13
+    %%     V13 -->|Concat Description| T13
+    %%     T13 -->|WHERE Desc LIKE '%Beverages%'| B13
+    %%     B13 -->|LEFT String Truncation| R13
+    %% end
+
+    %% %% Global Styling
+
+    %% %% Scenario 12: Order-Employee Context
+    %% subgraph Scenario_12 [Scenario 2: Regional Management]
+    %%     direction TB
+        
+    %%     %% Nodes
+    %%     E12_1[Orders]
+    %%     E12_2[Employees]
+    %%     V12[vw_OrderEmployeeContext]
+    %%     T12[Table_RegionalAssignments]
+    %%     B12(##TempJoinBuffer)
+    %%     R12[Final_ManagerialSalesAudit]
+
+    %%     %% Flow
+    %%     E12_1 -->|JOIN| V12
+    %%     E12_2 -->|JOIN| V12
+    %%     V12 -->|Assign ID| T12
+    %%     T12 -->|WHERE Country = 'UK'| B12
+    %%     B12 -->|Final Rep Mapping| R12
+    %% end
+
+    %% subgraph Scenario_11 [Scenario 1: At-Risk Order]
+    %%     direction TB
+        
+    %%     %% Nodes
+    %%     E11_1[Orders]
+    %%     E11_2[Customers]
+    %%     E11_3[Shippers]
+    %%     V11[vw_OrderFulfillment]
+    %%     T11[Table_FulfillmentLeads]
+    %%     B11(##TempAtRisk)
+    %%     R11[Final_AtRiskLog]
+
+    %%     %% Flow
+    %%     E11_1 -->|JOIN| V11
+    %%     E11_2 -->|JOIN| V11
+    %%     E11_3 -->|JOIN| V11
+    %%     V11 -->|WHERE RequiredDate IS NOT NULL| T11
+    %%     T11 -->|WHERE OrderDate > RequiredDate| B11
+    %%     B11 -->|GETDATE as LogDate| R11
+    %% end
+
+    %% Scenario 10: Employee Order Volume
+    subgraph Scenario_10 [Scenario 5: Employee Bonus]
+        direction TB
+        
+        %% Nodes
+        E10[Orders]
+        V10[vw_EmployeeOrderVolume]
+        T10[Table_EmployeeTiers]
+        B10(##TempBonusBuffer)
+        R10[Final_BonusAudit]
+
+        %% Flow
+        E10 -->|GROUP BY EmployeeID: COUNT Orders| V10
+        V10 -->|CASE: Orders > 100| T10
+        T10 -->|WHERE Rating = 'High Velocity'| B10
+        B10 -->|BonusAmount = 500| R10
+    end
+
+    %% Scenario 9: Category Stock Analysis
+    subgraph Scenario_9 [Scenario 4: Category Analysis]
+        direction TB
+        
+        %% Nodes
+        E9[Products]
+        V9[vw_CategoryStockAnalysis]
+        T9[Table_CategoryTiers]
+        B9(##TempPriceBuffer)
+        R9[Final_CategoryReport]
+
+        %% Flow
+        E9 -->|GROUP BY CategoryID: SUM & AVG| V9
+        V9 -->|CASE: Stock > 300| T9
+        T9 -->|WHERE StockLevel = 'Abundant'| B9
+        B9 -->|AvgPrice * 1.1| R9
+    end
+
+
+    %% Scenario 8: Supplier Stock
+    subgraph Scenario_8 [Scenario 3: Supplier Stock]
+        direction TB
+        E8[Products]
+        V8[vw_SupplierStockValue]
+        T8[Table_WarehouseInventory]
+        R8[Final_LogisticsReport]
+
+        E8 -->|UnitPrice * UnitsInStock| V8
+        V8 -->|CASE: Value > 500| T8
+        T8 -->|WHERE Category = 'High Value'| R8
+    end
+    %% Scenario 7: Employee Sales
+    subgraph Scenario_7 [Scenario 2: Employee Sales]
+        direction TB
+        
+        %% Nodes
+        E7_1[Employees]
+        E7_2[Orders]
+        E7_3[Order Details]
+        V7[vw_EmployeeSalesSummary]
+        T7[Table_SalesPerformance]
+        B7(##TempEliteSales)
+        R7[Final_CommissionReport]
+
+        %% Flow
+        E7_1 -->|JOIN & SUM Sales| V7
+        E7_2 -->|JOIN & SUM Sales| V7
+        E7_3 -->|JOIN & SUM Sales| V7
+        V7 -->|CASE: Revenue > 15k| T7
+        T7 -->|WHERE Tier = 'Elite'| B7
+        B7 -->|Revenue * 0.05| R7
+    end
+
+    %% Scenario 6: Order Totals
+    subgraph Scenario_6 [Scenario 1: Order Totals]
+        direction TB
+        E6["Order Details"] -->|SUM UnitPrice * Quantity| V6[vw_OrderTotals]
+        V6 -->|CASE WHEN Gross > 1000 THEN Tier1| T6[Table_OrderCategories]
+        T6 -->|WHERE Category = 'Tier1'| B6(##TempHighValue)
+        B6 -->|FinalAmount = Gross * 0.9| R6[Final_HighValueReport]
+    end
+
+
+
+%%     %% Scenario 5: Orders
+%%     subgraph Scenario_5 [Scenario 5: Order]
+%%         direction TB
+%%         E5[Orders] -->|OrderID, OrderDate, Freight, ShipName| V5[vw_OrderFreightDetails]
+%%         V5 -->|WHERE Freight > 100.00| T5[Table_HighFreightStaging]
+%%         T5 -->|StageID, ShippingLabel| B5(##TempFreightBuffer)
+%%         B5 -->|ShippingLabel → FinalShipName, 'URGENT'| R5[Final_PriorityShipmentReport]
+%%     end
+
+
+%%     %% Scenario 4: Customers
+%%     subgraph Scenario_4 [Scenario 4: Customer]
+%%         direction TB
+%%         E4[Customers] -->|CustomerID, CompanyName, ContactTitle| V4[vw_CustomerBase]
+%%         V4 -->|WHERE ContactTitle = 'Owner'| T4[Table_ExecutiveAccounts]
+%%         T4 -->|ExecID, AccountName| B4(##TempMailingBuffer)
+%%         B4 -->|AccountName → RecipientCompany| R4[Final_OwnerMailingList]
+%%     end
+%%     %% Scenario 3: Suppliers
+%%     subgraph Scenario_3 [Scenario 3: Supplier]
+%%         direction TB
+%%         E3[Suppliers] -->|SupplierID, CompanyName, Country| V3[vw_SupplierContactDetails]
+%%         V3 -->|WHERE Country <> 'USA'| T3[Table_InternationalSuppliers]
+%%         T3 -->|IntlID, OrgName| B3(##TempSupplierBuffer)
+%%         B3 -->|OrgName → SupplierName| R3[Final_ExternalSupplierList]
+%%     end
+
+
+%%     %% Scenario 2: Products
+%%     subgraph Scenario_2 [Scenario 2: Product]
+%%         direction TB
+%%         E2[Products] -->|ProductID, ProductName| V2[vw_ProductsAllStatus]
+%%         V2 -->|WHERE Discontinued = 1| T2[Table_DiscontinuedStaging]
+%%         T2 -->|ProductName → ProductLabel| B2(##TempDiscontinuedBuffer)
+%%         B2 -->|GetDate → ArchiveDate| R2[Final_DiscontinuedReport]
+%%     end
+
+%%  %% Scenario 1: Employees
+%%     subgraph Scenario_1 [Scenario 1: Employee]
+%%         direction TB
+%%         E1[Employees] -->|Region = 'WA'| V1[vw_EmployeeBasicInfo]
+%%         V1 --> T1[Table_US_Employees]
+%%         T1 -->|NewGlobalID → GlobalID| B1(##TempStaffBuffer)
+%%         B1 -->|'Active' → Status| R1[Final_ActiveStaffReport]
+%%     end
+
+
+
+%%     %% Styling
+%%     style E1 fill:#f9f,stroke:#333
+%%     style R1 fill:#00ff00,stroke:#333
+%%     style B1 stroke-dasharray: 5 5
+
+%%     style E2 fill:#f9f,stroke:#333
+%%     style R2 fill:#00ff00,stroke:#333
+%%     style B2 stroke-dasharray: 5 5
+
+%%     style E3 fill:#f9f,stroke:#333
+%%     style R3 fill:#00ff00,stroke:#333
+%%     style B3 stroke-dasharray: 5 5
+
+%%     style E4 fill:#f9f,stroke:#333
+%%     style R4 fill:#00ff00,stroke:#333
+%%     style B4 stroke-dasharray: 5 5
+
+%%     %% Styling for consistency with previous scenarios
+%%     style E5 fill:#f9f,stroke:#333
+%%     style R5 fill:#00ff00,stroke:#333
+%%     style B5 stroke-dasharray: 5 5
+
+    style E6 fill:#f9f,stroke:#333
+    style R6 fill:#00ff00,stroke:#333
+    style B6 stroke-dasharray: 5 5
+
+    style E7_1 fill:#f9f,stroke:#333,stroke-width:2px
+    style E7_2 fill:#f9f,stroke:#333,stroke-width:2px
+    style E7_3 fill:#f9f,stroke:#333,stroke-width:2px
+    style B7 stroke-dasharray: 5 5
+    style R7 fill:#00ff00,stroke:#333,stroke-width:2px
+
+    style E8 fill:#f9f,stroke:#333
+    style R8 fill:#00ff00,stroke:#333
+
+    style E9 fill:#f9f,stroke:#333
+    style B9 stroke-dasharray: 5 5
+    style R9 fill:#00ff00,stroke:#333
+
+    %% Global Styling
+    style E10 fill:#f9f,stroke:#333
+    style B10 stroke-dasharray: 5 5
+    style R10 fill:#00ff00,stroke:#333
+
+    %% style E11_1 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style E11_2 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style E11_3 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style B11 stroke-dasharray: 5 5
+    %% style R11 fill:#00ff00,stroke:#333,stroke-width:2px
+
+    
+    %% %% Styling
+    %% style E12_1 fill:#f9f,stroke:#333
+    %% style E12_2 fill:#f9f,stroke:#333
+    %% style B12 stroke-dasharray: 5 5
+    %% style R12 fill:#00ff00,stroke:#333
+
+    %% style E13_1 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style E13_2 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style E13_3 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style B13 stroke-dasharray: 5 5
+    %% style R13 fill:#00ff00,stroke:#333,stroke-width:2px
+
+    %% style E14_1 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style E14_2 fill:#f9f,stroke:#333,stroke-width:2px
+    %% style B14 stroke-dasharray: 5 5
+    %% style R14 fill:#00ff00,stroke:#333,stroke-width:2px
+
+
+    %% style E15_Sub fill:#f9f,stroke:#333,stroke-width:2px
+    %% style E15_Mgr fill:#f9f,stroke:#333,stroke-width:2px
+    %% style B15 stroke-dasharray: 5 5
+    %% style R15 fill:#00ff00,stroke:#333,stroke-width:2px
