@@ -1,0 +1,1 @@
+AuditID;CategoryID;QuarterLabel;RevenueValue<class 'int'>;<class 'int'>;<class 'str'>;<class 'decimal.Decimal'>2340;1;Q1_Sales;100.002341;1;Q2_Sales;150.002342;1;Q3_Sales;120.002343;1;Q4_Sales;180.002344;2;Q1_Sales;200.002345;2;Q2_Sales;250.002346;2;Q3_Sales;220.002347;2;Q4_Sales;280.00

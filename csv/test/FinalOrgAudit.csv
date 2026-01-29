@@ -1,0 +1,1 @@
+AuditID;EmployeeID;DepthLevel;PathString<class 'int'>;<class 'int'>;<class 'int'>;<class 'str'>364;2;0;Fuller365;1;1;Fuller -> Davolio366;3;1;Fuller -> Leverling367;4;1;Fuller -> Peacock368;5;1;Fuller -> Buchanan369;8;1;Fuller -> Callahan370;6;2;Fuller -> Buchanan -> Suyama371;7;2;Fuller -> Buchanan -> King372;9;2;Fuller -> Buchanan -> Dodsworth

@@ -1,0 +1,1 @@
+TierID;CategoryID;StockLevel;AvgPrice<class 'int'>;<class 'int'>;<class 'str'>;<class 'decimal.Decimal'>403;1;Abundant;37.98404;2;Abundant;23.06405;3;Abundant;25.16406;4;Abundant;28.73407;5;Abundant;20.25408;6;Limited;54.01409;7;Limited;32.37410;8;Abundant;20.68

@@ -48,17 +48,60 @@ scenario_select_2 = open('src/SQL_scripts/select/scenario2.sql').read()
 scenario_select_3 = open('src/SQL_scripts/select/scenario3.sql').read()
 scenario_select_4 = open('src/SQL_scripts/select/scenario4.sql').read()
 scenario_select_5 = open('src/SQL_scripts/select/scenario5.sql').read()
+
 scenario_transformation_1 = open('src/SQL_scripts/transformation/scenario1.sql').read()
 scenario_transformation_2 = open('src/SQL_scripts/transformation/scenario2.sql').read()
 scenario_transformation_3 = open('src/SQL_scripts/transformation/scenario3.sql').read()
 scenario_transformation_4 = open('src/SQL_scripts/transformation/scenario4.sql').read()
 scenario_transformation_5 = open('src/SQL_scripts/transformation/scenario5.sql').read()
+
 scenario_join_1 = open('src/SQL_scripts/join/scenario1.sql').read()
 scenario_join_2 = open('src/SQL_scripts/join/scenario2.sql').read()
 scenario_join_3 = open('src/SQL_scripts/join/scenario3.sql').read()
 scenario_join_4 = open('src/SQL_scripts/join/scenario4.sql').read()
 scenario_join_5 = open('src/SQL_scripts/join/scenario5.sql').read()
 
+scenario_dedup_1 = open('src/SQL_scripts/deduplication/scenario1.sql').read()
+scenario_dedup_2 = open('src/SQL_scripts/deduplication/scenario2.sql').read()
+scenario_dedup_3 = open('src/SQL_scripts/deduplication/scenario3.sql').read()
+scenario_dedup_4 = open('src/SQL_scripts/deduplication/scenario4.sql').read()
+scenario_dedup_5 = open('src/SQL_scripts/deduplication/scenario5.sql').read()
+
+scenario_derived_1 = open('src/SQL_scripts/derived_views/scenario1.sql').read()
+scenario_derived_2 = open('src/SQL_scripts/derived_views/scenario2.sql').read()
+scenario_derived_3 = open('src/SQL_scripts/derived_views/scenario3.sql').read()
+scenario_derived_4 = open('src/SQL_scripts/derived_views/scenario4.sql').read()
+scenario_derived_5 = open('src/SQL_scripts/derived_views/scenario5.sql').read()
+
+scenario_materialized_1 = open('src/SQL_scripts/materialized/scenario1.sql').read()
+scenario_materialized_2 = open('src/SQL_scripts/materialized/scenario2.sql').read()
+scenario_materialized_3 = open('src/SQL_scripts/materialized/scenario3.sql').read()
+scenario_materialized_4 = open('src/SQL_scripts/materialized/scenario4.sql').read()
+scenario_materialized_5 = open('src/SQL_scripts/materialized/scenario5.sql').read()
+
+scenario_partitioning_1 = open('src/SQL_scripts/partitioning/scenario1.sql').read()
+scenario_partitioning_2 = open('src/SQL_scripts/partitioning/scenario2.sql').read()
+scenario_partitioning_3 = open('src/SQL_scripts/partitioning/scenario3.sql').read()
+scenario_partitioning_4 = open('src/SQL_scripts/partitioning/scenario4.sql').read()
+scenario_partitioning_5 = open('src/SQL_scripts/partitioning/scenario5.sql').read()
+
+scenario_recursive_1 = open('src/SQL_scripts/recursive/scenario1.sql').read()
+scenario_recursive_2 = open('src/SQL_scripts/recursive/scenario2.sql').read()
+scenario_recursive_3 = open('src/SQL_scripts/recursive/scenario3.sql').read()
+scenario_recursive_4 = open('src/SQL_scripts/recursive/scenario4.sql').read()
+scenario_recursive_5 = open('src/SQL_scripts/recursive/scenario5.sql').read()
+
+scenario_tabular_1 = open('src/SQL_scripts/tabular/scenario1.sql').read()
+scenario_tabular_2 = open('src/SQL_scripts/tabular/scenario2.sql').read()
+scenario_tabular_3 = open('src/SQL_scripts/tabular/scenario3.sql').read()
+scenario_tabular_4 = open('src/SQL_scripts/tabular/scenario4.sql').read()
+scenario_tabular_5 = open('src/SQL_scripts/tabular/scenario5.sql').read()
+
+scenario_temporary_1 = open('src/SQL_scripts/temporary/scenario1.sql').read()
+scenario_temporary_2 = open('src/SQL_scripts/temporary/scenario2.sql').read()
+scenario_temporary_3 = open('src/SQL_scripts/temporary/scenario3.sql').read()
+scenario_temporary_4 = open('src/SQL_scripts/temporary/scenario4.sql').read()
+scenario_temporary_5 = open('src/SQL_scripts/temporary/scenario5.sql').read()
 
 
 scenarios = {
@@ -207,6 +250,42 @@ scenarios = {
             ('Table_SupervisionStaging', '##TempSupervisionBuffer'),
             ('##TempSupervisionBuffer', 'Final_SupervisionAudit')
         ]
-    }
-    ]
+    },
+    ],
+    'deduplication' : [ {'script' : scenario_dedup_1}, 
+                        {'script' : scenario_dedup_2},
+                        {'script' : scenario_dedup_3},
+                        {'script' : scenario_dedup_4},
+                        {'script' : scenario_dedup_5}],
+    'derived' : [       {'script' : scenario_derived_1}, 
+                        {'script' : scenario_derived_2},
+                        {'script' : scenario_derived_3},
+                        {'script' : scenario_derived_4},
+                        {'script' : scenario_derived_5}],
+    'materialized' : [  {'script' : scenario_materialized_1}, 
+                        {'script' : scenario_materialized_2},
+                        {'script' : scenario_materialized_3},
+                        {'script' : scenario_materialized_4},
+                        {'script' : scenario_materialized_5}],
+    'partitioning' : [  {'script' : scenario_partitioning_1}, 
+                        {'script' : scenario_partitioning_2},
+                        {'script' : scenario_partitioning_3},
+                        {'script' : scenario_partitioning_4},
+                        {'script' : scenario_partitioning_5}],
+    'tabular' : [       {'script' : scenario_tabular_1}, 
+                        {'script' : scenario_tabular_2},
+                        {'script' : scenario_tabular_3},
+                        {'script' : scenario_tabular_4},
+                        {'script' : scenario_tabular_5}],
+    'temporary' : [     {'script' : scenario_temporary_1}, 
+                        {'script' : scenario_temporary_2},
+                        {'script' : scenario_temporary_3},
+                        {'script' : scenario_temporary_4},
+                        {'script' : scenario_temporary_5}],
+    'recursive' : [     {'script' : scenario_recursive_1}, 
+                        {'script' : scenario_recursive_2},
+                        {'script' : scenario_recursive_3},
+                        {'script' : scenario_recursive_4},
+                        {'script' : scenario_recursive_5}]
+    
 }

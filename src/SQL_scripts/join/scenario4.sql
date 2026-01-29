@@ -1,5 +1,11 @@
+-- Section 0: Setup Missing Dependencies
+-- Ensuring the GlobalIDSequence exists for the script to run.
+IF NOT EXISTS (SELECT * FROM sys.sequences WHERE name = 'GlobalIDSequence')
+    CREATE SEQUENCE GlobalIDSequence START WITH 1 INCREMENT BY 1;
+GO
+
 -- Section 1: Create View with a Left Outer Join
--- Tests: Lineage through optional relationships where some records have no supplier.
+-- Tests: Lineage through optional relationships.
 CREATE OR ALTER VIEW vw_ProductSupplierMatch AS
 SELECT 
     p.ProductID, 
@@ -10,110 +16,57 @@ FROM Products p
 LEFT OUTER JOIN Suppliers s ON p.SupplierID = s.SupplierID;
 GO
 
--- Log Row-Level Lineage for Left Join
-DECLARE @pid INT, @sid INT;
-DECLARE ViewCursor CURSOR FOR SELECT ProductID, SupplierID FROM vw_ProductSupplierMatch;
-OPEN ViewCursor;
-FETCH NEXT FROM ViewCursor INTO @pid, @sid;
-WHILE @@FETCH_STATUS = 0
-BEGIN
-    -- Product is always a source
-    INSERT INTO DataLineage (SourceName, SourcePKName, SourceID, TargetName, TargetPKName, TargetID)
-    VALUES ('Products', 'ProductID', CAST(@pid AS VARCHAR), 'vw_ProductSupplierMatch', 'ProductID', CAST(@pid AS VARCHAR));
-    
-    -- Supplier is a source only if it exists (Left Join logic)
-    IF @sid IS NOT NULL
-    BEGIN
-        INSERT INTO DataLineage (SourceName, SourcePKName, SourceID, TargetName, TargetPKName, TargetID)
-        VALUES ('Suppliers', 'SupplierID', CAST(@sid AS VARCHAR), 'vw_ProductSupplierMatch', 'ProductID', CAST(@pid AS VARCHAR));
-    END;
-
-    FETCH NEXT FROM ViewCursor INTO @pid, @sid;
-END;
-CLOSE ViewCursor; DEALLOCATE ViewCursor;
-GO
-
--- Section 2: View -> Table_SupplyChainStaging
+-- Section 2: Materialize into SupplyChainStaging
+-- Tests: Lineage through CASE logic based on JOIN results.
 IF OBJECT_ID('Table_SupplyChainStaging', 'U') IS NOT NULL DROP TABLE Table_SupplyChainStaging;
 CREATE TABLE Table_SupplyChainStaging (
-    SCID INT, 
+    SCID INT PRIMARY KEY, 
     ProdID INT, 
-    SourcingStatus VARCHAR(50)
+    SourcingStatus NVARCHAR(100)
 );
 
-DECLARE @v_pid INT, @v_pname NVARCHAR(40), @v_sname NVARCHAR(40), @nextSCID INT;
-DECLARE TableCursor CURSOR FOR SELECT ProductID, ProductName, SupplierName FROM vw_ProductSupplierMatch;
-
-OPEN TableCursor;
-FETCH NEXT FROM TableCursor INTO @v_pid, @v_pname, @v_sname;
-WHILE @@FETCH_STATUS = 0
-BEGIN
-    SELECT @nextSCID = NEXT VALUE FOR GlobalIDSequence;
-    
-    INSERT INTO Table_SupplyChainStaging (SCID, ProdID, SourcingStatus)
-    VALUES (@nextSCID, @v_pid, 
-            CASE WHEN @v_sname IS NULL THEN 'ORPHAN: ' + @v_pname ELSE 'Verified: ' + @v_sname END);
-
-    INSERT INTO DataLineage (SourceName, SourcePKName, SourceID, TargetName, TargetPKName, TargetID)
-    VALUES ('vw_ProductSupplierMatch', 'ProductID', CAST(@v_pid AS VARCHAR), 'Table_SupplyChainStaging', 'SCID', CAST(@nextSCID AS VARCHAR));
-    
-    FETCH NEXT FROM TableCursor INTO @v_pid, @v_pname, @v_sname;
-END;
-CLOSE TableCursor; DEALLOCATE TableCursor;
+INSERT INTO Table_SupplyChainStaging (SCID, ProdID, SourcingStatus)
+SELECT 
+    NEXT VALUE FOR GlobalIDSequence,
+    ProductID,
+    CASE 
+        WHEN SupplierID IS NULL THEN 'ORPHAN: ' + ProductName 
+        ELSE 'Verified: ' + SupplierName 
+    END
+FROM vw_ProductSupplierMatch;
 GO
 
--- Section 3 & 4: Procedures for Integrity Reporting
+-- Section 3: Procedures for Integrity Reporting
+-- Tests: Multi-step procedural lineage involving global temp tables.
+
 CREATE OR ALTER PROCEDURE proc_FinalizeIntegrityReport AS
 BEGIN
     IF OBJECT_ID('Final_SupplyChainAudit', 'U') IS NOT NULL DROP TABLE Final_SupplyChainAudit;
-    CREATE TABLE Final_SupplyChainAudit (AuditID INT, ProductID INT, AlertStatus VARCHAR(50));
+    CREATE TABLE Final_SupplyChainAudit (AuditID INT PRIMARY KEY, ProductID INT, AlertStatus NVARCHAR(100));
 
-    DECLARE @t_id INT, @t_pid INT, @t_status VARCHAR(50), @finalID INT;
-    DECLARE FinalCursor CURSOR FOR SELECT TempID, ProdID, SourcingStatus FROM ##TempIntegrityBuffer;
-
-    OPEN FinalCursor;
-    FETCH NEXT FROM FinalCursor INTO @t_id, @t_pid, @t_status;
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        SELECT @finalID = NEXT VALUE FOR GlobalIDSequence;
-        
-        INSERT INTO Final_SupplyChainAudit (AuditID, ProductID, AlertStatus)
-        VALUES (@finalID, @t_pid, @t_status);
-
-        INSERT INTO DataLineage (SourceName, SourcePKName, SourceID, TargetName, TargetPKName, TargetID)
-        VALUES ('##TempIntegrityBuffer', 'TempID', CAST(@t_id AS VARCHAR), 'Final_SupplyChainAudit', 'AuditID', CAST(@finalID AS VARCHAR));
-        
-        FETCH NEXT FROM FinalCursor INTO @t_id, @t_pid, @t_status;
-    END;
-    CLOSE FinalCursor; DEALLOCATE FinalCursor;
+    -- Move data from the global buffer to the final audit table
+    INSERT INTO Final_SupplyChainAudit (AuditID, ProductID, AlertStatus)
+    SELECT NEXT VALUE FOR GlobalIDSequence, ProdID, SourcingStatus
+    FROM ##TempIntegrityBuffer;
 END;
 GO
 
 CREATE OR ALTER PROCEDURE proc_ProcessOrphanedProducts AS
 BEGIN
+    -- Section 4: Create Global Temp Buffer
+    -- Filter specifically for products that failed the join
     IF OBJECT_ID('tempdb..##TempIntegrityBuffer') IS NOT NULL DROP TABLE ##TempIntegrityBuffer;
-    CREATE TABLE ##TempIntegrityBuffer (TempID INT, ProdID INT, SourcingStatus VARCHAR(50));
+    CREATE TABLE ##TempIntegrityBuffer (TempID INT, ProdID INT, SourcingStatus NVARCHAR(100));
 
-    DECLARE @sid INT, @pid INT, @status VARCHAR(50), @newTempID INT;
-    -- Filter specifically for products that failed the join (Orphans)
-    DECLARE ProcCursor CURSOR FOR SELECT SCID, ProdID, SourcingStatus FROM Table_SupplyChainStaging WHERE SourcingStatus LIKE 'ORPHAN%';
+    INSERT INTO ##TempIntegrityBuffer (TempID, ProdID, SourcingStatus)
+    SELECT SCID, ProdID, SourcingStatus 
+    FROM Table_SupplyChainStaging 
+    WHERE SourcingStatus LIKE 'ORPHAN%';
 
-    OPEN ProcCursor;
-    FETCH NEXT FROM ProcCursor INTO @sid, @pid, @status;
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        SELECT @newTempID = NEXT VALUE FOR GlobalIDSequence;
-        INSERT INTO ##TempIntegrityBuffer VALUES (@newTempID, @pid, @status);
-
-        INSERT INTO DataLineage (SourceName, SourcePKName, SourceID, TargetName, TargetPKName, TargetID)
-        VALUES ('Table_SupplyChainStaging', 'SCID', CAST(@sid AS VARCHAR), '##TempIntegrityBuffer', 'TempID', CAST(@newTempID AS VARCHAR));
-
-        FETCH NEXT FROM ProcCursor INTO @sid, @pid, @status;
-    END;
-    CLOSE ProcCursor; DEALLOCATE ProcCursor;
-
+    -- Call the finalization step
     EXEC proc_FinalizeIntegrityReport;
 END;
 GO
 
+-- Execute the chain
 EXEC proc_ProcessOrphanedProducts;

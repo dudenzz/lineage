@@ -20,7 +20,7 @@ def execute_query(connection, query):
     cursor = connection.cursor()
     cursor.execute(query)
     cursor.close()
-def execute_sql_script(connection, script):
+def execute_sql_script(connection, script, verbose = False):
     statements = [s.strip() for s in script.splitlines()]
     batch = ""
     cursor = connection.cursor()
@@ -47,7 +47,8 @@ def execute_sql_script(connection, script):
             raise
 
     cursor.close()
-    print("Script executed successfully!")
+    if not verbose:
+        print("Script executed successfully!")
 def execute_sql_script_from_url(connection, script_url):
     print("Downloading the script...")
     script = requests.get(script_url).text 
@@ -81,10 +82,11 @@ def create_connection():
     return conn
 
 
-def create_scenario(connection, type, number):
+def create_scenario(connection, type, number, verbose = False):
     scenario = scenarios[type][number-1]['script']
-    print(f'Addding a {type} scenario number {number}')
-    execute_sql_script(connection, scenario)
+    if not verbose:
+        print(f'Addding a {type} scenario number {number}')
+    execute_sql_script(connection, scenario, verbose = verbose)
     
 def get_all_tables_info(connection : Connection):
     cursor = connection.cursor()

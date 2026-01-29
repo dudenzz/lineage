@@ -22,7 +22,7 @@ def create_graph(ontology, source_directory):
         print(f'Processing {directory} file {i}/{total}                                            ', end='\r')
         if directory.startswith('DataLineage'):
             continue
-        with open(source_directory + '/' + directory, newline='') as csvfile:
+        with open(source_directory + '/' + directory, newline='', encoding='utf8') as csvfile:
             tableName = parse_name(directory)
             onto_table = ontology.Table(tableName)
             onto_table.label = [tableName]
