@@ -2,171 +2,143 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <unordered_set>
 #include <omp.h>
 #include <chrono>
 #include <atomic>
 #include <iomanip>
 #include <algorithm>
-#include <set>
-#include <algorithm>
 #include <random>
-struct Path {
-    std::vector<int> nodes;
-};
-struct Triple {
-    int s, p, o, neg;
-};
+
+struct Triple { int s, p, o, neg; };
+struct Edge { int to; int rel; };
+
 class Graph {
 public:
-    // We use a vector of ints; we don't need the 'rel' ID for pathfinding nodes
-    std::vector<std::vector<int>> adj; 
+    std::vector<std::vector<Edge>> adj; 
     std::vector<Triple> triples;
     int max_node_id = 0;
 
     void load_from_file(const std::string& filename) {
         std::ifstream file(filename);
         int s, o, r, neg;
-        struct RawEdge { int s, p, o; };
-        std::vector<RawEdge> temp;
-
         while (file >> neg >> s >> o >> r) {
-            if(neg == 1)
-            {
-                temp.push_back({s, r, o});
+            if(neg == 1) {
                 if (s > max_node_id) max_node_id = s;
                 if (o > max_node_id) max_node_id = o;
+                if ((int)adj.size() <= std::max(s, o)) adj.resize(std::max(s, o) + 1);
+                adj[s].push_back({o, r});
             }
-            triples.push_back({s,r,o,neg});
+            triples.push_back({s, r, o, neg});
         }
-
-        adj.resize(max_node_id + 1);
-        for (auto& edge : temp) {
-            adj[edge.s].push_back(edge.o);
-        }
-
-        // Remove duplicate edges (s -> o) so we don't search twice
-        for (int i = 0; i <= max_node_id; ++i) {
-            std::sort(adj[i].begin(), adj[i].end());
-            adj[i].erase(std::unique(adj[i].begin(), adj[i].end()), adj[i].end());
-        }
-        //shuffle all adjececy lists, so we get a different result every execution (this is a simulation of drawing a random path, altough longer paths will be drawn more often)
         std::random_device rd;
         std::mt19937 g(rd());
-        for (int i = 0; i <= max_node_id; ++i) {
-            std::shuffle(adj[i].begin(), adj[i].end(), g); }
+        for (auto& list : adj) std::shuffle(list.begin(), list.end(), g);
     }
 
-    void find_paths_recursive(int current, int target, int max_depth, 
+    void find_paths_recursive(int current, int target, int max_depth, int current_branching,
                             std::vector<uint8_t>& visited, 
-                            std::vector<int>& current_path,
-                            std::vector<std::vector<int>>& found_for_this_pair) {
+                            std::vector<int>& current_rel_path,
+                            std::vector<std::vector<int>>& found_paths) {
+        
         if (current == target) {
-            if (current_path.size() >= 3) {
-                // Manual uniqueness check (faster than set for small N)
-                for(const auto& p : found_for_this_pair) if(p == current_path) return;
-                found_for_this_pair.push_back(current_path);
+            if (current_rel_path.size() >= 2) {
+                bool exists = false;
+                for(const auto& p : found_paths) if(p == current_rel_path) { exists = true; break; }
+                if(!exists) found_paths.push_back(current_rel_path);
             }
             return;
         }
 
-        if (current_path.size() >= max_depth || found_for_this_pair.size() >= 3) return;
+        if (current_rel_path.size() >= (size_t)max_depth || found_paths.size() >= 3) return;
 
-        for (int neighbor : adj[current]) {
-            if (!visited[neighbor]) {
-                visited[neighbor] = 1;
-                current_path.push_back(neighbor);
-                find_paths_recursive(neighbor, target, max_depth, visited, current_path, found_for_this_pair);
-                current_path.pop_back();
-                visited[neighbor] = 0;
-                if (found_for_this_pair.size() >= 3) break;
+        int branches_explored = 0;
+        for (const auto& edge : adj[current]) {
+            if (branches_explored >= current_branching) break; 
+
+            if (!visited[edge.to]) {
+                visited[edge.to] = 1;
+                current_rel_path.push_back(edge.rel);
+                find_paths_recursive(edge.to, target, max_depth, current_branching, visited, current_rel_path, found_paths);
+                current_rel_path.pop_back();
+                visited[edge.to] = 0;
+                
+                branches_explored++;
+                if (found_paths.size() >= 3) break;
             }
         }
     }
 };
 
-int main() {
-    std::cout << "Creating graph structure...\n";
-    Graph g;
-    std::cout << "Reading graph data.\n";
-    g.load_from_file("triples.data");
-    std::cout << "Graph loaded.\n";
-    std::ofstream outfile("paths_output.txt");
-    std::atomic<long> processed_nodes(0);
-    int total_nodes = g.triples.size();
-    auto start_time = std::chrono::steady_clock::now();
-    
-    std::cout << "Starting parallel execution.\n";
-    #pragma omp parallel
-    {   
-        // #pragma omp critical
-        // {
-        //     std::cout << "Thread " << omp_get_thread_num()<<" started.\n";
-        // }
-        std::vector<uint8_t> visited(g.max_node_id + 1, 0);
-        std::vector<int> path_stack;
-        std::stringstream ss;
-        
-        #pragma omp for schedule(dynamic, 10)
-        for (Triple t : g.triples) {
+int main(int argc, char* argv[]) {
+    // CLI Arguments: depth, base_branch, cap_branch
+    int max_depth = 7;
+    int base_branch = 20;
+    int cap_branch = 200;
 
-
-
-            
-            // Use a set to ensure unique paths for this specific S-T pair
-            std::vector<std::vector<int>> found_for_this_pair;
-            
-            visited.clear();
-            path_stack.clear();
-            visited.push_back(t.s);
-            path_stack.push_back(t.s);
-
-            g.find_paths_recursive(t.s, t.o, 10, visited, path_stack, found_for_this_pair);
-
-            // Write relation id to the buffer
-            // Write the unique paths to the buffer
-            
-            for (const auto& path : found_for_this_pair) {
-                ss << t.p << " " << t.neg << ":"; 
-                for (size_t i = 0; i < path.size(); ++i) {
-                    ss << path[i] << (i == path.size() - 1 ? "" : " ");
-                }
-                ss << "\n";
-            }
-            
-
-            // Thread-safe progress and periodic flush
-            if (ss.tellp() > 512000) { // 512KB buffer
-                #pragma omp critical
-                {
-                    outfile << ss.rdbuf();
-                    outfile.flush();
-                }
-                ss.str("");
-                ss.clear();
-            }
-            long current_val = ++processed_nodes;
-            if (omp_get_thread_num() == 0) {
-                auto now = std::chrono::steady_clock::now();
-                std::chrono::duration<double> elapsed = now - start_time;
-                
-                double percent = (double)current_val / total_nodes * 100.0;
-                double speed = current_val / (elapsed.count() + 0.001);
-                double remaining_sec = (total_nodes - current_val) / (speed + 0.001);
-
-                std::cout << "\rProgress: " << std::fixed << std::setprecision(2) << percent << "% "
-                          << "| Nodes/s: " << (int)speed 
-                          << "| ETA: " << (int)remaining_sec / 60 << "m " << (int)remaining_sec % 60 << "s    " 
-                          << std::flush;
-            }
-        }
-
-        #pragma omp critical
-        {
-            outfile << ss.rdbuf();
-        }
+    if (argc >= 4) {
+        max_depth = std::stoi(argv[1]);
+        base_branch = std::stoi(argv[2]);
+        cap_branch = std::stoi(argv[3]);
+    } else {
+        std::cout << "Usage: ./pathfinder [max_depth] [base_branching] [cap_branching]\n"
+                  << "Using defaults: Depth=" << max_depth << ", Base=" << base_branch << ", Cap=" << cap_branch << "\n\n";
     }
 
-    std::cout << "\nDone! Unique paths saved." << std::endl;
+    Graph g;
+    g.load_from_file("triples.data");
+    
+    std::ofstream outfile("paths_output.txt");
+    std::atomic<long> processed(0);
+    int total = g.triples.size();
+    auto start_time = std::chrono::steady_clock::now();
+    
+    #pragma omp parallel
+    {   
+        std::vector<uint8_t> visited(g.max_node_id + 1, 0);
+        std::vector<int> path_stack;
+        std::vector<std::vector<int>> local_found;
+        std::stringstream ss;
+        
+        #pragma omp for schedule(dynamic, 100)
+        for (int i = 0; i < total; ++i) {
+            const Triple& t = g.triples[i];
+            local_found.clear();
+            
+            // Adaptive Loop: Start narrow, expand only if needed
+            int current_b = base_branch;
+            while(local_found.size() < 3 && current_b <= cap_branch) {
+                path_stack.clear();
+                visited[t.s] = 1;
+                g.find_paths_recursive(t.s, t.o, max_depth, current_b, visited, path_stack, local_found);
+                visited[t.s] = 0;
+                
+                if(local_found.size() < 3) current_b *= 2; 
+                else break;
+            }
+
+            for (const auto& path : local_found) {
+                ss << t.neg << " " << t.s << " "  <<t.p << " " << t.o<<" " << ":"; 
+                for (size_t j = 0; j < path.size(); ++j) ss << path[j] << (j == path.size() - 1 ? "" : " ");
+                ss << "\n";
+            }
+
+            if (ss.tellp() > 1024 * 1024) {
+                #pragma omp critical
+                { outfile << ss.rdbuf(); outfile.flush(); }
+                ss.str(""); ss.clear();
+            }
+
+            long current_val = ++processed;
+            if (omp_get_thread_num() == 0 && current_val % 500 == 0) {
+                double elapsed = std::chrono::duration<double>(std::chrono::steady_clock::now() - start_time).count();
+                double speed = current_val / (elapsed + 1e-6);
+                std::cout << "\rProgress: " << std::fixed << std::setprecision(2) << (current_val * 100.0 / total) << "% | Speed: " << (int)speed << " n/s" << std::flush;
+            }
+        }
+        #pragma omp critical
+        { outfile << ss.rdbuf(); }
+    }
+    outfile.close();
+    std::cout << "\nDone. Elapsed: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - start_time).count() << "s\n";
     return 0;
 }

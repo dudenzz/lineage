@@ -79,7 +79,7 @@ def create_lineage_structures_in_graph(ontology, source_directory):
                 query1 = f"""
                             PREFIX : <http://www.semanticweb.org/put/database-data-lineage/>
                             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                            SELECT ?cellValue 
+                            SELECT ?x 
                             WHERE {{
                                 ?x :hasCellValue ?cellValue .
                                 ?cellValue :exactValue "{value1}" .
@@ -92,7 +92,7 @@ def create_lineage_structures_in_graph(ontology, source_directory):
                 query2 = f"""
                             PREFIX : <http://www.semanticweb.org/put/database-data-lineage/>
                             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                            SELECT ?cellValue 
+                            SELECT ?x 
                             WHERE {{
                                 ?x :hasCellValue ?cellValue .
                                 ?cellValue :exactValue "{value2}" .

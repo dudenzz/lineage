@@ -49,6 +49,10 @@ def execute_sql_script(connection, script, verbose = False):
     cursor.close()
     if not verbose:
         print("Script executed successfully!")
+def execute_sql_script_from_file(connection, script_file):
+    with open(script_file,'r') as file:
+        script = file.read()
+        execute_sql_script(connection, script)
 def execute_sql_script_from_url(connection, script_url):
     print("Downloading the script...")
     script = requests.get(script_url).text 
@@ -65,7 +69,7 @@ def clean_database(connection):
     print("Switching to a new databse")
     execute_query(connection,f"USE {db_database}")
     print("Creating a fresh Northwind schema and filling it with data")
-    execute_sql_script_from_url(connection,db_creation_script_url)
+    execute_sql_script_from_file(connection,'src/benchmark_tool/db_script.sql')
     print("Creating the lineage structure")
 
 

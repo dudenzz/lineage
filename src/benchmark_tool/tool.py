@@ -28,8 +28,9 @@ def print_menu():
     print('8. Create test file.')
     print('9. Create training part of benchmark. (All scenario types)')
     print('10. Create test part of benchmark. (All scenario types)')
-    print('11. Test model')
-    print('12. Exit.')
+    print('11. Put all training scenarios into database (scenario 1 = test - for publication, not very practical option)')
+    print('12. Put all test scenarios into database (scenario 1 = test - for publication, not very practical option)')
+    print('13. Exit.')
 def scenario_type_menu():
     print('1. Select based scenarios')
     print('2. Transformation based scenarios')
@@ -79,10 +80,10 @@ def create_csv_data(target_directory):
         view_file.close()
     connection.close()
 
-def create_training_files(ontology, inductive = False):
-    train_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/train.txt','w+', encoding='utf8')
-    test_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/test.txt','w+', encoding='utf8')
-    validation_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/valid.txt','w+', encoding='utf8')
+def create_training_files(ontology, inductive = False, suffix = ''):
+    train_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/train{suffix}.txt','w+', encoding='utf8')
+    test_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/test{suffix}.txt','w+', encoding='utf8')
+    validation_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/valid{suffix}.txt','w+', encoding='utf8')
     for individual in ontology.individuals():
         for prop in individual.get_properties():
             for value in prop[individual]:
@@ -99,15 +100,15 @@ def create_training_files(ontology, inductive = False):
                 rng = random.random() 
                 # if rng < 0.9 : continue
                 rng = random.random() 
-
+                if not inductive or 'derived' not in prop.python_name.lower():
                 # train_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
-                train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
-
+                    train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                if not inductive or 'derived' in prop.python_name.lower():
                 # test_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
-                test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
-
+                    test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                if not inductive:
                 # validation_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
-                validation_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                    validation_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
     train_file.close()
     test_file.close()
     validation_file.close()
@@ -127,9 +128,13 @@ def main():
         elif option == '2':
             scenario_type_menu()
             scenario_type = int(input("Choose scenario type: "))
-            scenario_number = int(input("Choose scenario(1-5): "))
+            scenario_number = int(input("Choose scenario(1-5 or 0 for all): "))
             connection = database.create_connection()
-            database.create_scenario(connection, scenario_types[scenario_type], scenario_number)
+            if scenario_number == 0:
+                for i in range(5):
+                    database.create_scenario(connection, scenario_types[scenario_type], i)
+            else:
+                database.create_scenario(connection, scenario_types[scenario_type], scenario_number)
             connection.close()
         elif option == '3':
             create_csv_data(csv_train_directory)
@@ -179,8 +184,13 @@ def main():
             connection = database.create_connection()
             include = int(input('Which scenario should be included in testing? (It should not be in the training part) [1-5]'))
             chosen_scenarios = [include]
+            scenario_type_menu()
+            scenario_type_picked = int(input('Which scenario type should be included (0=all)'))
+            scenarios_types = [0,1,2,3,4,5,6,7,8,9]
+            if scenario_type_picked != 0:
+                scenarios_types = [scenario_type_picked-1]
             print('Adding scenarios...')
-            for scenario_type in range(10):
+            for scenario_type in scenarios_types:
                 for scenario_number in chosen_scenarios:
                     try:
                         database.create_scenario(connection, scenario_types[scenario_type+1], scenario_number, verbose=True)
@@ -194,11 +204,25 @@ def main():
             knowledge_graph.create_lineage_structures_in_graph(ontology,csv_test_directory)
             ontology.save(os.path.join(csv_nn_directory, 'test_kg.rdf'))
             print('Creating training files...')
-            create_training_files(ontology,True)
+            if scenario_type_picked == 0:
+                suffix = ''
+            else:
+                suffix = '_' + scenario_types[scenario_type_picked]
+            create_training_files(ontology,True, suffix=suffix)
             connection.close()
         elif option == '11':
-            pass
+            connection = database.create_connection()
+            for j in range(10):
+                for i in [2,3,4,5]:
+                        database.create_scenario(connection, scenario_types[j+1], i)
+            connection.close()
         elif option == '12':
+            connection = database.create_connection()
+            for j in range(10):
+                for i in [1]:
+                        database.create_scenario(connection, scenario_types[j+1], i)
+            connection.close()
+        elif option == '13':
             running = False
         else:
             print('invalid option')
