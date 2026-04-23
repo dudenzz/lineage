@@ -1,0 +1,62 @@
+[
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all tracks and their unit prices.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name], [UnitPrice] FROM [Track];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind the total number of albums in the database.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT COUNT([AlbumId]) FROM [Album];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhich customers live in the city of Paris?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [FirstName], [LastName] FROM [Customer] WHERE [City] = 'Paris';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nShow the titles of all albums by the artist 'Led Zeppelin'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Title] FROM [Album] JOIN [Artist] ON [Album].[ArtistId] = [Artist].[ArtistId] WHERE [Artist].[Name] = 'Led Zeppelin';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhat is the average total of all invoices?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT AVG([Total]) FROM [Invoice];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all tracks in the 'Rock' genre.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Track].[Name] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Rock';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWho is the manager of the employee named 'Nancy Edwards'?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Mgr].[FirstName], [Mgr].[LastName] FROM [Employee] AS [Emp] JOIN [Employee] AS [Mgr] ON [Emp].[ReportsTo] = [Mgr].[EmployeeId] WHERE [Emp].[FirstName] = 'Nancy' AND [Emp].[LastName] = 'Edwards';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind the name of the artist who recorded the album 'Unplugged'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Artist].[Name] FROM [Artist] JOIN [Album] ON [Artist].[ArtistId] = [Album].[ArtistId] WHERE [Album].[Title] = 'Unplugged';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nShow the top 10 longest tracks in minutes.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name], ([Milliseconds]/60000.0) AS [Minutes] FROM [Track] ORDER BY [Milliseconds] DESC LIMIT 10;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all customers who have a support representative named 'Jane Peacock'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Customer].[FirstName], [Customer].[LastName] FROM [Customer] JOIN [Employee] ON [Customer].[SupportRepId] = [Employee].[EmployeeId] WHERE [Employee].[FirstName] = 'Jane' AND [Employee].[LastName] = 'Peacock';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind the total number of tracks in the 'MPEG audio file' media type.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT COUNT([TrackId]) FROM [Track] JOIN [MediaType] ON [Track].[MediaTypeId] = [MediaType].[MediaTypeId] WHERE [MediaType].[Name] = 'MPEG audio file';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nDisplay the billing address and total for all invoices from Brazil.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [BillingAddress], [Total] FROM [Invoice] WHERE [BillingCountry] = 'Brazil';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nShow the first 5 tracks in the 'Audiobooks' playlist.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Track].[Name] FROM [Track] JOIN [PlaylistTrack] ON [Track].[TrackId] = [PlaylistTrack].[TrackId] JOIN [Playlist] ON [PlaylistTrack].[PlaylistId] = [Playlist].[PlaylistId] WHERE [Playlist].[Name] = 'Audiobooks' LIMIT 5;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhich employee was hired most recently?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [FirstName], [LastName], [HireDate] FROM [Employee] ORDER BY [HireDate] DESC LIMIT 1;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHow many tracks does each album have? List Album Title and the count.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Album].[Title], COUNT([Track].[TrackId]) FROM [Album] JOIN [Track] ON [Album].[AlbumId] = [Track].[AlbumId] GROUP BY [Album].[Title];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhat is the total size in bytes of the 'Classical' genre tracks?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT SUM([Bytes]) FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Classical';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all customers whose company name is not null.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [FirstName], [LastName], [Company] FROM [Customer] WHERE [Company] IS NOT NULL;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind all invoices that were created between 2010 and 2011.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT * FROM [Invoice] WHERE [InvoiceDate] >= '2010-01-01' AND [InvoiceDate] <= '2011-12-31';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWho are the top 3 customers by total spending?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Customer].[FirstName], [Customer].[LastName], SUM([Invoice].[Total]) AS [TotalSpent] FROM [Customer] JOIN [Invoice] ON [Customer].[CustomerId] = [Invoice].[CustomerId] GROUP BY [Customer].[CustomerId] ORDER BY [TotalSpent] DESC LIMIT 3;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nDelete the playlist named 'Movies'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nDELETE FROM [Playlist] WHERE [Name] = 'Movies';<|eot_id|>"
+  }
+]

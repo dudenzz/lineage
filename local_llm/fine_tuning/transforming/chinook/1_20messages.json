@@ -1,0 +1,62 @@
+[
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCreate a new table named [TrackPriceHistory] to track price changes over time. It should include TrackId, OldPrice, NewPrice, and ChangeDate.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nCREATE TABLE [TrackPriceHistory] ([TrackId] INTEGER, [OldPrice] NUMERIC(10,2), [NewPrice] NUMERIC(10,2), [ChangeDate] DATETIME, FOREIGN KEY ([TrackId]) REFERENCES [Track] ([TrackId]));<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nAdd a new column [LoyaltyPoints] to the [Customer] table with an INTEGER data type.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nALTER TABLE [Customer] ADD COLUMN [LoyaltyPoints] INTEGER;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nLINEAR TRANSFORMATION: Increase all track prices by a flat 10% inflation adjustment.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nUPDATE [Track] SET [UnitPrice] = [UnitPrice] * 1.10;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPOLYNOMIAL TRANSFORMATION: Assign a 'PopularityScore' to tracks calculated as (SalesCount^2 + 5), where SalesCount is the number of times the track appears in InvoiceLine.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [TrackId], (COUNT([TrackId]) * COUNT([TrackId]) + 5) AS [PopularityScore] FROM [InvoiceLine] GROUP BY [TrackId];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFILTER-BASED TRANSFORMATION: Create a View [HighValueCustomers] that only includes customers who have spent more than the average total invoice amount.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nCREATE VIEW [HighValueCustomers] AS SELECT * FROM [Customer] WHERE [CustomerId] IN (SELECT [CustomerId] FROM [Invoice] GROUP BY [CustomerId] HAVING SUM([Total]) > (SELECT AVG([Total]) FROM [Invoice]));<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCOMBINED TRANSFORMATION: Normalize track [Bytes] by dividing by the maximum byte size in the database, then filter for only those in the 'Rock' genre.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name], ([Bytes] * 1.0 / (SELECT MAX([Bytes]) FROM [Track])) AS [NormalizedSize] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Rock';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nUpdate the [Employee] table to set the [ReportsTo] to NULL for the employee with the oldest [HireDate].<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nUPDATE [Employee] SET [ReportsTo] = NULL WHERE [EmployeeId] = (SELECT [EmployeeId] FROM [Employee] ORDER BY [HireDate] ASC LIMIT 1);<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nEXPONENTIAL GROWTH SIMULATION: Propose a query that predicts a 5% compounded monthly growth of [Total] for the next 3 months for InvoiceId 1.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Total], [Total] * 1.05 AS [Month1], [Total] * 1.05 * 1.05 AS [Month2], [Total] * 1.05 * 1.05 * 1.05 AS [Month3] FROM [Invoice] WHERE [InvoiceId] = 1;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nTransform the [Track] table by replacing any occurrence of ' ' (space) with '_' (underscore) in the [Name] column.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nUPDATE [Track] SET [Name] = REPLACE([Name], ' ', '_');<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCreate a summary table [GenreSales] that stores the Genre Name and the total revenue generated by that genre.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nCREATE TABLE [GenreSales] AS SELECT [Genre].[Name], SUM([InvoiceLine].[UnitPrice] * [InvoiceLine].[Quantity]) AS [TotalRevenue] FROM [Genre] JOIN [Track] ON [Genre].[GenreId] = [Track].[GenreId] JOIN [InvoiceLine] ON [Track].[TrackId] = [InvoiceLine].[TrackId] GROUP BY [Genre].[Name];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nRemove all playlists that do not contain any tracks.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nDELETE FROM [Playlist] WHERE [PlaylistId] NOT IN (SELECT DISTINCT [PlaylistId] FROM [PlaylistTrack]);<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nLINEAR WEIGHTING: Calculate a 'StorageScore' for tracks where [Bytes] is weighted at 0.7 and [Milliseconds] at 0.3.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name], ([Bytes] * 0.7 + [Milliseconds] * 0.3) AS [StorageScore] FROM [Track];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nConvert all customer email addresses to lowercase.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nUPDATE [Customer] SET [Email] = LOWER([Email]);<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPROBABILISTIC FILTER: Select a random sample of 10% of the tracks from the [Track] table.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT * FROM [Track] ORDER BY RANDOM() LIMIT (SELECT COUNT(*) / 10 FROM [Track]);<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCreate a new table [ArtistCategory] that assigns 'Legend' to artists with >10 albums and 'Emerging' to others.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Artist].[Name], CASE WHEN COUNT([Album].[AlbumId]) > 10 THEN 'Legend' ELSE 'Emerging' END AS [Category] FROM [Artist] LEFT JOIN [Album] ON [Artist].[ArtistId] = [Album].[ArtistId] GROUP BY [Artist].[ArtistId];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nApply a polynomial transformation to [UnitPrice] using the formula (price^2 + price + 1) for a specialized tax report.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name], ([UnitPrice] * [UnitPrice] + [UnitPrice] + 1) AS [TaxAdjustment] FROM [Track];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nDelete all tracks from the [MediaType] named 'Protected MPEG-4 video file'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nDELETE FROM [Track] WHERE [MediaTypeId] = (SELECT [MediaTypeId] FROM [MediaType] WHERE [Name] = 'Protected MPEG-4 video file');<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nAdd a CONSTRAINT to the [Invoice] table ensuring [Total] is never negative.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n-- Note: SQLite requires table recreation for CHECK constraints, but standard SQL is:\nALTER TABLE [Invoice] ADD CHECK ([Total] >= 0);<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nLINEAR SCALING: Convert [Milliseconds] to [Minutes] in a new view [TrackDurationInMinutes].<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nCREATE VIEW [TrackDurationInMinutes] AS SELECT [Name], ([Milliseconds] / 60000.0) AS [Minutes] FROM [Track];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nTransform [BillingPostalCode] by removing any non-alphanumeric characters.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n-- This typically requires regex functions available in the DB engine\nSELECT [InvoiceId], REPLACE(REPLACE([BillingPostalCode], '-', ''), ' ', '') AS [CleanPostalCode] FROM [Invoice];<|eot_id|>"
+  }
+]

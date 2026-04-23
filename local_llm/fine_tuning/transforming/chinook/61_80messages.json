@@ -1,0 +1,62 @@
+[
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCreate a unified contact list showing 'Type' (Customer or Employee), Full Name, and City.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT 'Employee' AS [Type], [FirstName] || ' ' || [LastName] AS [FullName], [City] FROM [Employee] UNION SELECT 'Customer', [FirstName] || ' ' || [LastName], [City] FROM [Customer] ORDER BY [FullName];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind all unique cities that either have an employee living in them or have received an invoice.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [City] FROM [Employee] UNION SELECT [BillingCity] FROM [Invoice];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCombine a list of tracks from the 'Classical' genre with tracks from the 'Opera' genre into one result set.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Track].[Name] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Classical' UNION SELECT [Track].[Name] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Opera';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a 'Global ID' transformation: Select EmployeeId prefixed with 'EMP-' and CustomerId prefixed with 'CUST-'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT 'EMP-' || [EmployeeId] AS [GlobalID], [LastName] FROM [Employee] UNION ALL SELECT 'CUST-' || [CustomerId], [LastName] FROM [Customer];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all artists who have albums and all artists who have tracks in the 'Alternative' genre, combined into one list.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name] FROM [Artist] WHERE [ArtistId] IN (SELECT [ArtistId] FROM [Album]) UNION SELECT [Artist].[Name] FROM [Artist] JOIN [Album] ON [Artist].[ArtistId] = [Album].[ArtistId] JOIN [Track] ON [Album].[AlbumId] = [Track].[AlbumId] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Alternative';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nIdentify all billing addresses in the USA from 2010 and combine them with all billing addresses in Canada from 2011.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [BillingAddress], [BillingCity] FROM [Invoice] WHERE [BillingCountry] = 'USA' AND [InvoiceDate] LIKE '2010%' UNION SELECT [BillingAddress], [BillingCity] FROM [Invoice] WHERE [BillingCountry] = 'Canada' AND [InvoiceDate] LIKE '2011%';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nShow a list of all tracks that are either longer than 15 minutes or cost more than $1.98.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name] FROM [Track] WHERE [Milliseconds] > 900000 UNION SELECT [Name] FROM [Track] WHERE [UnitPrice] > 1.98;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a 'Market Concentration' report: Select the top 3 countries by total revenue and UNION them with the bottom 3 countries.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT * FROM (SELECT [BillingCountry], SUM([Total]) AS [Rev] FROM [Invoice] GROUP BY [BillingCountry] ORDER BY [Rev] DESC LIMIT 3) UNION SELECT * FROM (SELECT [BillingCountry], SUM([Total]) AS [Rev] FROM [Invoice] GROUP BY [BillingCountry] ORDER BY [Rev] ASC LIMIT 3);<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nCombine the names of all playlists with the names of all genres in a single column named 'Categories'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name] AS [Categories] FROM [Playlist] UNION SELECT [Name] FROM [Genre];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a transformation to find all 'Stakeholders': List all Employees, Customers, and Artists (just the names) in a single list.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [FirstName] || ' ' || [LastName] FROM [Employee] UNION SELECT [FirstName] || ' ' || [LastName] FROM [Customer] UNION SELECT [Name] FROM [Artist];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind all tracks that are either in the '90's Music' playlist or are in the 'Rock' genre.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Track].[Name] FROM [Track] JOIN [PlaylistTrack] ON [Track].[TrackId] = [PlaylistTrack].[TrackId] JOIN [Playlist] ON [PlaylistTrack].[PlaylistId] = [Playlist].[PlaylistId] WHERE [Playlist].[Name] = '90''s Music' UNION SELECT [Track].[Name] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Rock';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all tracks where the composer is 'AC/DC' and combine them with tracks where the composer is 'Bono'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Name] FROM [Track] WHERE [Composer] = 'AC/DC' UNION SELECT [Name] FROM [Track] WHERE [Composer] = 'Bono';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a filter for 'Internal vs External Support': UNION a list of Employees who report to someone with a list of Customers who have a SupportRepId.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT 'Internal' AS [SupportType], [FirstName], [LastName] FROM [Employee] WHERE [ReportsTo] IS NOT NULL UNION SELECT 'External', [FirstName], [LastName] FROM [Customer] WHERE [SupportRepId] IS NOT NULL;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nIdentify all unique phone numbers across both the [Employee] and [Customer] tables.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Phone] FROM [Employee] WHERE [Phone] IS NOT NULL UNION SELECT [Phone] FROM [Customer] WHERE [Phone] IS NOT NULL;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a 'Sales Milestone' report: All invoices with total > $15 (flagged as 'High') UNION with invoices < $2 (flagged as 'Low').<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT 'High' AS [Milestone], [InvoiceId], [Total] FROM [Invoice] WHERE [Total] > 15 UNION SELECT 'Low', [InvoiceId], [Total] FROM [Invoice] WHERE [Total] < 2;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nList all albums released by 'Audioslave' and UNION them with albums released by 'Metallica'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Title] FROM [Album] JOIN [Artist] ON [Album].[ArtistId] = [Artist].[ArtistId] WHERE [Artist].[Name] = 'Audioslave' UNION SELECT [Title] FROM [Album] JOIN [Artist] ON [Artist].[ArtistId] = [Artist].[ArtistId] WHERE [Artist].[Name] = 'Metallica';<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nFind all composers who have tracks in the 'Jazz' genre and all composers who have tracks in the 'Blues' genre.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Composer] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Jazz' AND [Composer] IS NOT NULL UNION SELECT [Composer] FROM [Track] JOIN [Genre] ON [Track].[GenreId] = [Genre].[GenreId] WHERE [Genre].[Name] = 'Blues' AND [Composer] IS NOT NULL;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a 'Database Coverage' report: Count of distinct artists with albums UNION count of distinct artists with tracks.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT 'With Albums' AS [Metric], COUNT(DISTINCT [ArtistId]) AS [Total] FROM [Album] UNION SELECT 'With Tracks', COUNT(DISTINCT [ArtistId]) FROM [Album] JOIN [Track] ON [Album].[AlbumId] = [Track].[AlbumId];<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nIdentify all tracks that are part of the 'Music' playlist (PlaylistId 1) and combine them with those in the 'TV Shows' playlist (PlaylistId 3).<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [TrackId] FROM [PlaylistTrack] WHERE [PlaylistId] = 1 UNION SELECT [TrackId] FROM [PlaylistTrack] WHERE [PlaylistId] = 3;<|eot_id|>"
+  },
+  {
+    "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a SQL Expert for the Chinook Database. Answer the user's request using valid SQL.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nPropose a transformation to create a single 'Address Directory' of all registered Customer and Invoice billing addresses in 'Germany'.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nSELECT [Address], [City], [PostalCode] FROM [Customer] WHERE [Country] = 'Germany' UNION SELECT [BillingAddress], [BillingCity], [BillingPostalCode] FROM [Invoice] WHERE [BillingCountry] = 'Germany';<|eot_id|>"
+  }
+]

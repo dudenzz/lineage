@@ -1,0 +1,879 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/put/database-data-lineage#"
+     xml:base="http://www.semanticweb.org/put/database-data-lineage"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/put/database-data-lineage"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#belongsToColumn -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#belongsToColumn">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#hasInstance"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#columnDerivedFrom -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#columnDerivedFrom">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#wasDerivedFrom"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#executesProcedureOrFunction -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#executesProcedureOrFunction">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#hadPlan"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#ProcFuncExecution"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#StoredProcedure"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#generatedRow -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#generatedRow">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#generated"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#ProcFuncExecution"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Row"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasAlias -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasAlias">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasCellValue -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasCellValue">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Row"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasColumn -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasColumn">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/dsd#hasAttribute"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#isColumnOf"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasConstraint -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasConstraint">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Constraint"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasDatatype -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasDatatype">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/csvw#datatype"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasInstance -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasInstance">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#hasRow -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#hasRow">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/csvw#row"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Row"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#isColumnOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#isColumnOf">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/dsd#isAttributeOf"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#referencesTable -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#referencesTable">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#ForeignKey"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#rowDerivedFrom -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#rowDerivedFrom">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#wasDerivedFrom"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#tableDerivedFrom -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#tableDerivedFrom">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#wasDerivedFrom"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#usedTable -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#usedTable">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#used"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#ProcFuncExecution"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#valueDerivedFrom -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#valueDerivedFrom">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#wasDerivedFrom"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#wasUsedForCreation -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#wasUsedForCreation">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#View"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Query"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/csvw#datatype -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/csvw#datatype">
+        <rdfs:domain rdf:resource="http://w3c.github.io/csvw/ns/Column"/>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/csvw#Datatype"/>
+        <rdfs:label>csvw:datatype</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/csvw#row -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/csvw#row">
+        <rdfs:domain rdf:resource="http://w3c.github.io/csvw/ns/Table"/>
+        <rdfs:range rdf:resource="http://w3c.github.io/csvw/ns/Row"/>
+        <rdfs:label>csvw:row</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#generated -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#generated"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#hadPlan -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#hadPlan"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#used -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#used"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#wasDerivedFrom -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/ns/prov#wasDerivedFrom">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:label>prov:wasDerivedFrom</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/dsd#hasAttribute -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/dsd#hasAttribute">
+        <owl:inverseOf rdf:resource="https://w3id.org/dsd#isAttributeOf"/>
+        <rdfs:domain rdf:resource="https://w3id.org/dsd#Concept"/>
+        <rdfs:range rdf:resource="https://w3id.org/dsd#Attribute"/>
+        <rdfs:label>dsd:hasAttribute</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/dsd#isAttributeOf -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/dsd#isAttributeOf">
+        <rdfs:domain rdf:resource="https://w3id.org/dsd#Attribute"/>
+        <rdfs:range rdf:resource="https://w3id.org/dsd#Concept"/>
+        <rdfs:label>dsd:isAttributeOf</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#datatypeName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#datatypeName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#exactValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#exactValue">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#isNullable -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#isNullable">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#isUnique -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#isUnique">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#name">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/csvw#name"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#rownum -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#rownum">
+        <rdfs:subPropertyOf rdf:resource="http://www/w3/org/ns/csvw#rownum"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Row"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#title -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#title">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/csvw#title"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#typeLength -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/put/database-data-lineage#typeLength">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/csvw#name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/ns/csvw#name">
+        <rdfs:domain rdf:resource="http://w3c.github.io/csvw/ns/Column"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>csvw:name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.w3.org/ns/csvw#title -->
+
+    <owl:DatatypeProperty rdf:about="http://www.w3.org/ns/csvw#title">
+        <rdfs:domain rdf:resource="http://w3c.github.io/csvw/ns/Table"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>csvw:title</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www/w3/org/ns/csvw#rownum -->
+
+    <owl:DatatypeProperty rdf:about="http://www/w3/org/ns/csvw#rownum">
+        <rdfs:domain rdf:resource="http://w3c.github.io/csvw/ns/Row"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>csvw:rownum</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://w3c.github.io/csvw/ns/Cell -->
+
+    <owl:Class rdf:about="http://w3c.github.io/csvw/ns/Cell">
+        <rdfs:label>csvw:Cell</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://w3c.github.io/csvw/ns/Column -->
+
+    <owl:Class rdf:about="http://w3c.github.io/csvw/ns/Column">
+        <rdfs:label>csvw:Column</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://w3c.github.io/csvw/ns/Row -->
+
+    <owl:Class rdf:about="http://w3c.github.io/csvw/ns/Row">
+        <rdfs:label>csvw:Row</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://w3c.github.io/csvw/ns/Table -->
+
+    <owl:Class rdf:about="http://w3c.github.io/csvw/ns/Table">
+        <rdfs:label>csvw:Table</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#BooleanType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#BooleanType">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#CellValue -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#CellValue">
+        <rdfs:subClassOf rdf:resource="http://w3c.github.io/csvw/ns/Cell"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#CheckConstraint -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#CheckConstraint">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Constraint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Cluster -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Cluster">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#ClusteredTables -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#ClusteredTables">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Column -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Column">
+        <rdfs:subClassOf rdf:resource="http://w3c.github.io/csvw/ns/Column"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Constraint -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Constraint">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#DataTimeType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#DataTimeType">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#DataType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#DataType">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/csvw#Datatype"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Execution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Execution">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#ExternalTable -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#ExternalTable">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#nonPersistentData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#ForeignKey -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#ForeignKey">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Constraint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#FuncExecution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#FuncExecution">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Execution"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#nonPersistentData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Function -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Function">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#StoredProcedure"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#MaterializedView -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#MaterializedView">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#NotNullConstraint -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#NotNullConstraint">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Constraint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#NumericType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#NumericType">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#PrimaryKey -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#PrimaryKey">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Constraint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#ProcExecution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#ProcExecution">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Execution"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#ProcFuncExecution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#ProcFuncExecution">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Procedure -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Procedure">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#StoredProcedure"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Query -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Query"/>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#QueryExecution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#QueryExecution">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Execution"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#nonPersistentData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Row -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Row">
+        <rdfs:subClassOf rdf:resource="http://w3c.github.io/csvw/ns/Row"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#StoredProcedure -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#StoredProcedure">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject"/>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Plan"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#StringType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#StringType">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#Table -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#Table">
+        <rdfs:subClassOf rdf:resource="http://w3c.github.io/csvw/ns/Table"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject"/>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <rdfs:subClassOf rdf:resource="https://w3id.org/dsd#Concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#TableFunction -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#TableFunction">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Function"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#TemporalTable -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#TemporalTable">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#UniqueConstraint -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#UniqueConstraint">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Constraint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#View -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#View">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#nonPersistentData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#nonPersistentData -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#nonPersistentData">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage#persistentDbObject -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/put/database-data-lineage#persistentDbObject">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DatabaseDataLineageConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/ns/csvw#Datatype -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/csvw#Datatype">
+        <rdfs:label>csvw:DataType</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#Activity -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/prov#Activity"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#Entity -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/prov#Entity"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#Plan -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/prov#Plan"/>
+    
+
+
+    <!-- https://w3id.org/dsd#Attribute -->
+
+    <owl:Class rdf:about="https://w3id.org/dsd#Attribute">
+        <rdfs:label>dsd:Attribute</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- https://w3id.org/dsd#Concept -->
+
+    <owl:Class rdf:about="https://w3id.org/dsd#Concept">
+        <rdfs:label>dsd:Concept</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/cellOrders1Product -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/cellOrders1Product">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+        <belongsToColumn rdf:resource="http://www.semanticweb.org/put/database-data-lineage/columnOrdersProduct"/>
+        <exactValue>PowerBank</exactValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/cellOrders1Shiper -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/cellOrders1Shiper">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+        <belongsToColumn rdf:resource="http://www.semanticweb.org/put/database-data-lineage/columnOrdersShiper"/>
+        <exactValue>MediaMax</exactValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/cellYearSummary20Product -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/cellYearSummary20Product">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#CellValue"/>
+        <belongsToColumn rdf:resource="http://www.semanticweb.org/put/database-data-lineage/columnYearSummaryProduct"/>
+        <valueDerivedFrom rdf:resource="http://www.semanticweb.org/put/database-data-lineage/cellOrders1Product"/>
+        <exactValue>PowerBank</exactValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/columnOrdersProduct -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/columnOrdersProduct">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <hasDatatype rdf:resource="http://www.semanticweb.org/put/database-data-lineage/dataTypeString"/>
+        <hasInstance rdf:resource="http://www.semanticweb.org/put/database-data-lineage/cellOrders1Product"/>
+        <isColumnOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage/tableOrders"/>
+        <name>Product</name>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/columnOrdersShiper -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/columnOrdersShiper">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <hasDatatype rdf:resource="http://www.semanticweb.org/put/database-data-lineage/dataTypeString"/>
+        <hasInstance rdf:resource="http://www.semanticweb.org/put/database-data-lineage/cellOrders1Shiper"/>
+        <isColumnOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage/tableOrders"/>
+        <name>Shiper</name>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/columnYearSummaryProduct -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/columnYearSummaryProduct">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Column"/>
+        <columnDerivedFrom rdf:resource="http://www.semanticweb.org/put/database-data-lineage/columnOrdersProduct"/>
+        <hasDatatype rdf:resource="http://www.semanticweb.org/put/database-data-lineage/dataTypeString"/>
+        <hasInstance rdf:resource="http://www.semanticweb.org/put/database-data-lineage/cellYearSummary20Product"/>
+        <isColumnOf rdf:resource="http://www.semanticweb.org/put/database-data-lineage/tableYearSummary"/>
+        <name>Product</name>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/dataTypeString -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/dataTypeString">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#DataType"/>
+        <datatypeName>String</datatypeName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/rowOrders1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/rowOrders1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Row"/>
+        <hasCellValue rdf:resource="http://www.semanticweb.org/put/database-data-lineage/cellOrders1Shiper"/>
+        <rownum rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</rownum>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/rowYearSummary20 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/rowYearSummary20">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Row"/>
+        <hasCellValue rdf:resource="http://www.semanticweb.org/put/database-data-lineage/cellYearSummary20Product"/>
+        <rownum rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</rownum>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/tableOrders -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/tableOrders">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+        <hasColumn rdf:resource="http://www.semanticweb.org/put/database-data-lineage/columnOrdersShiper"/>
+        <hasRow rdf:resource="http://www.semanticweb.org/put/database-data-lineage/rowOrders1"/>
+        <title>Orders</title>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/put/database-data-lineage/tableYearSummary -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/put/database-data-lineage/tableYearSummary">
+        <rdf:type rdf:resource="http://www.semanticweb.org/put/database-data-lineage#Table"/>
+        <hasColumn rdf:resource="http://www.semanticweb.org/put/database-data-lineage/columnYearSummaryProduct"/>
+        <hasRow rdf:resource="http://www.semanticweb.org/put/database-data-lineage/rowYearSummary20"/>
+        <name>Product Summary 2025</name>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+
