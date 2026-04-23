@@ -1,10 +1,16 @@
 secret
+secret2
+csv/
 venv/
 .venv/
 linux-venv/
+linux_gpu_env/
 answers/*.answer
 src/__pycache__/
+src/benchmark_tool/__pycache__/
+src/graph_tool/__pycache__/
 SiaILP/
 SiaILP
 *.ldf
 *.mdf
+local_llm\
