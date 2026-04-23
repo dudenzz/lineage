@@ -1,7 +1,7 @@
 from mssql_python import connect
 from mssql_python.connection import Connection
 from config import db_database, db_hostname, db_directory, db_service, db_creation_script_url
-from queries import drop_database, create_database, create_lineage_structure, scenarios, get_all_tables, get_all_views
+from queries import drop_database, create_database, create_lineage_structure, scenarios, get_all_tables, get_all_views, get_table_schema_generator, get_table_constraints_generator, get_table_fks_generator
 import subprocess
 import requests
 
@@ -32,6 +32,7 @@ def execute_sql_script(connection, script, verbose = False):
                     cursor.execute(batch)
                     connection.commit()
                 except Exception as e:
+                    print("batch:",batch)
                     print("Error executing batch:", e)
                     raise
                 batch = ""
@@ -43,6 +44,7 @@ def execute_sql_script(connection, script, verbose = False):
             cursor.execute(batch)
             connection.commit()
         except Exception as e:
+            print("batch:",batch)
             print("Error executing batch:", e)
             raise
 
@@ -105,7 +107,30 @@ def get_all_views_info(connection : Connection):
     tables = cursor.execute(get_all_views)
     for table in tables:
         yield table
+def get_table_schema(connection : Connection, object_name):
+    cursor = connection.cursor()
+    cursor.execute(f"USE {db_database}")
+    query = get_table_schema_generator(object_name )
 
+    data = cursor.execute(query)
+    for column in data:
+        yield column
+def get_table_constraints(connection : Connection, object_name):
+    cursor = connection.cursor()
+    cursor.execute(f"USE {db_database}")
+    query = get_table_constraints_generator(object_name )
+
+    data = cursor.execute(query)
+    for column in data:
+        yield column
+def get_table_fks(connection : Connection, object_name):
+    cursor = connection.cursor()
+    cursor.execute(f"USE {db_database}")
+    query = get_table_fks_generator(object_name )
+
+    data = cursor.execute(query)
+    for column in data:
+        yield column
 def get_all_data(connection : Connection, object_name ):
     cursor = connection.cursor()
     cursor.execute(f"USE {db_database}")

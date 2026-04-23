@@ -14,3 +14,8 @@ def clean_directory(directory):
     for file in os.listdir(directory):
         filepath = os.path.join(directory, file)
         os.remove(filepath)
+        
+use_constraints = False
+use_schema = False
+use_fks = False
+use_data = True

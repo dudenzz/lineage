@@ -4,6 +4,7 @@ import knowledge_graph
 from config import csv_test_directory, csv_train_directory, csv_nn_directory
 import os
 import random
+from helpers import use_constraints, use_schema, use_fks, use_data
 scenario_types = {
     1 : 'select',
     2 : 'transformation',
@@ -14,7 +15,17 @@ scenario_types = {
     7 : 'recursive',
     8 : 'tabular',
     9 : 'partitioning',
-    10 : 'temporary'
+    10 : 'temporary',
+    11 : 'notrans_sel_tsf',
+    12 : 'linear_sel_tsf',
+    13 : 'nonlinear_sel_tsf',
+    14 : 'notrans_join_tsf',
+    15 : 'linear_join_tsf',
+    16 : 'nonlinear_join_tsf',
+    17 : 'notrans_uni_tsf',
+    18 : 'linear_uni_tsf',
+    19 : 'nonlinear_uni_tsf',
+
 }
 
 def print_menu():
@@ -42,6 +53,15 @@ def scenario_type_menu():
     print('8. Tabular operation based objects')
     print('9. Partitioned data processing')
     print('10. Temporary table utilization')
+    print('11. Select based scenarios with no transformations')
+    print('12. Select based scenarios with linear transformations')
+    print('13. Select based scenarios with non-linear transformations')
+    print('14. Join based scenarios with no transformations')
+    print('15. Join based scenarios with linear transformations')
+    print('16. Join based scenarios with non-linear transformations')
+    print('17. Union based scenarios with no transformations')
+    print('18. Union based scenarios with linear transformations')
+    print('19. Union based scenarios with non-linear transformations')
 
 def create_csv_data(target_directory):
 
@@ -52,24 +72,47 @@ def create_csv_data(target_directory):
     for table_info in database.get_all_tables_info(connection):
         table_name = table_info[2]
         db_name = '['+table_name+']' if ' ' in table_name else table_name
+
         onto_name = helpers.parse_name(db_name)
-        file_name = onto_name + ".csv"
+        file_name = onto_name + ".data.csv"
         table_data.append((db_name, onto_name, file_name))
     for table in table_data:
         (db_name, onto_name, file_name) = table
+        db_name_f = db_name.strip('[').rstrip(']')
         table_file = open(os.path.join(target_directory,file_name), 'w+', encoding='utf8')
+       
+        schema = database.get_table_schema(connection, db_name_f)
+        schema_filename = onto_name+".schema.csv"
+        schema_file = open(os.path.join(target_directory,schema_filename), 'w+', encoding='utf8')
+        for entry in schema:
+            schema_file.write(";".join([str(attr).replace(';',',') for attr in entry]) + os.linesep[0])
+        constraints = database.get_table_constraints(connection, db_name_f)
+        constraints_filename = onto_name+".constraints.csv"
+        constraints_file = open(os.path.join(target_directory,constraints_filename), 'w+', encoding='utf8')
+        for entry in constraints:
+            constraints_file.write(";".join([str(attr).replace(';',',') for attr in entry]) + os.linesep[0])
+            
+        fks = database.get_table_fks(connection, db_name_f)
+        fks_filename = onto_name+".fks.csv"
+        fks_file = open(os.path.join(target_directory,fks_filename), 'w+', encoding='utf8')
+        for entry in fks:
+            fks_file.write(";".join([str(attr).replace(';',',') for attr in entry]) + os.linesep[0])
+            
         for entry in database.get_all_data(connection, db_name):
             parsed_entry = [str(cell).replace(';',',') for cell in entry]
             table_file.write(";".join(parsed_entry) + os.linesep[0])
+        fks_file.close()
+        constraints_file.close()
+        schema_file.close()
         table_file.close()
     view_data = [] 
     print('Skipped lineage entries (has to be greater than 0 in the training set for the system to be evaluated properly): ', skipped_lineage_entries)
     for view_info in database.get_all_views_info(connection):
         view_name = view_info[2]
-        if not view_name.startswith('vw'): continue
+        # if not view_name.startswith('vw'): continue
         db_name = '['+view_name+']' if ' ' in view_name else view_name
         onto_name = helpers.parse_name(db_name)
-        file_name = onto_name + ".csv"
+        file_name = onto_name + ".vw.csv"
         view_data.append((db_name, onto_name, file_name))
     for view in view_data:
         (db_name, onto_name, file_name) = view
@@ -79,11 +122,14 @@ def create_csv_data(target_directory):
             view_file.write(";".join(parsed_entry) + os.linesep[0])
         view_file.close()
     connection.close()
-
 def create_training_files(ontology, inductive = False, suffix = ''):
-    train_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/train{suffix}.txt','w+', encoding='utf8')
-    test_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/test{suffix}.txt','w+', encoding='utf8')
-    validation_file = open(f'SiaILP/data/lineage_full{"_ind" if inductive else ""}/valid{suffix}.txt','w+', encoding='utf8')
+    experiment = open('src/graph_tool/experiment', 'r').read().strip()
+    if inductive:
+        train_file = open(f'csv/kgs/{experiment}/train_gold.txt','w+', encoding='utf8')
+        test_file = open(f'csv/kgs/{experiment}/test.txt','w+', encoding='utf8')
+    else:
+        train_file = open(f'csv/kgs/{experiment}/train.txt','w+', encoding='utf8')
+
     for individual in ontology.individuals():
         for prop in individual.get_properties():
             for value in prop[individual]:
@@ -100,18 +146,23 @@ def create_training_files(ontology, inductive = False, suffix = ''):
                 rng = random.random() 
                 # if rng < 0.9 : continue
                 rng = random.random() 
-                if not inductive or 'derived' not in prop.python_name.lower():
-                # train_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
+                if inductive:
+                    if 'derived' not in prop.python_name.lower():
+                        train_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
+                        train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                    else:
+                        test_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
+                        test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+                else:
+                    train_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
                     train_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
-                if not inductive or 'derived' in prop.python_name.lower():
-                # test_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
-                    test_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
-                if not inductive:
-                # validation_file.write(f"{value_name}\t{prop.python_name+'_inverse'}\t{individual_name}\n")
-                    validation_file.write(f"{individual_name}\t{prop.python_name}\t{value_name}\n")
+
+                    
+
     train_file.close()
-    test_file.close()
-    validation_file.close()
+    if inductive:
+        test_file.close()
+    
 
 
 def main():
@@ -128,10 +179,16 @@ def main():
         elif option == '2':
             scenario_type_menu()
             scenario_type = int(input("Choose scenario type: "))
-            scenario_number = int(input("Choose scenario(1-5 or 0 for all): "))
+            scenario_number = int(input("Choose scenario(1-20 or 0 for all; -1 for all but 1-3; -2 for 1-3): "))
             connection = database.create_connection()
             if scenario_number == 0:
-                for i in range(5):
+                for i in range(20):
+                    database.create_scenario(connection, scenario_types[scenario_type], i)
+            elif scenario_number == -1:
+                for i in range(3,20,1):
+                    database.create_scenario(connection, scenario_types[scenario_type], i)
+            elif scenario_number == -2:
+                for i in range(0,3,1):
                     database.create_scenario(connection, scenario_types[scenario_type], i)
             else:
                 database.create_scenario(connection, scenario_types[scenario_type], scenario_number)
@@ -142,12 +199,12 @@ def main():
             create_csv_data(csv_test_directory)
         elif option == '5':
             ontology = knowledge_graph.load_base_ontology()
-            knowledge_graph.create_graph(ontology,csv_train_directory)
+            knowledge_graph.create_graph(ontology,csv_train_directory, use_constraints = use_constraints, use_schema = use_schema, use_fks = use_fks, use_data = use_data)
             knowledge_graph.create_lineage_structures_in_graph(ontology,csv_train_directory)
             ontology.save(os.path.join(csv_nn_directory, 'train_kg.rdf'))
         elif option == '6':
             ontology = knowledge_graph.load_base_ontology()
-            knowledge_graph.create_graph(ontology,csv_test_directory)
+            knowledge_graph.create_graph(ontology,csv_test_directory, use_constraints = use_constraints, use_schema = use_schema, use_fks = use_fks, use_data = use_data)
             knowledge_graph.create_lineage_structures_in_graph(ontology,csv_test_directory)
             ontology.save(os.path.join(csv_nn_directory, 'test_kg.rdf'))
         elif option == '7':
@@ -228,4 +285,5 @@ def main():
             print('invalid option')
         if(running): input('Continue...')
 if __name__ == "__main__":
+
     main()
