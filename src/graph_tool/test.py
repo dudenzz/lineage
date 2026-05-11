@@ -12,9 +12,11 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 from network_models.siamese import create_siamese_model
 from network_models.autoencoder import create_autoencoder   
+from network_models.vae import create_vae_model   
+from network_models.attention import create_gat_model   
 
 experiment = open('experiment', 'r').read().strip()
-
+network = open('network', 'r').read().strip()
 lines = open(f'../../csv/kgs/{experiment}/test_paths_output.txt', 'r').readlines()
 i = 0
 skips = 0
@@ -90,17 +92,42 @@ X_p3 = pad_sequences(X_p3_clean, maxlen=max_len, padding='post')
 X_rel = np.array(X_conn_based_rels).reshape(-1, 1)
 Y = np.array(y_conn_based) # Ensure labels are also a numpy array
 
-m = create_siamese_model(41,41)
-m.load_weights(f'../../csv/kgs/{experiment}/model.h5')
+m = create_siamese_model(num_nodes=41, num_rels=41)
+if network == 'vae':
+    m = create_vae_model(num_nodes=41, num_rels=41)
+if network == 'siamese':
+    m = create_siamese_model(num_nodes=41, num_rels=41)
+if network == 'gat':
+    m = create_gat_model()
+if network == 'autoencoder':
+    m = create_autoencoder(num_nodes=41, num_rels=41)
+m.load_weights(f'../../csv/kgs/{experiment}/model_{network}.h5')
 
 from sklearn.metrics import classification_report, confusion_matrix
 
 #precision, recall, f1
-y_est = m.predict([X_p1, X_p2, X_p3, X_rel])
-for i,y_ in enumerate(y_est):
-    if(Y[i] == 1):
-        print(y_, (y_ > 0.85).astype(int), Y[i])
-print(classification_report(Y, (y_est > 0.00005).astype(int)))
+if network == 'vae':
+    y_est = m.predict({
+    "p1_input": X_p1,
+    "p2_input": X_p2,
+    "p3_input": X_p3,
+    "rel_input": X_rel
+    })[:][0]
+if network == 'siamese':
+    y_est = m.predict([X_p1,X_p2,X_p3,X_rel])
+if network == 'gat':
+    m = create_gat_model()
+if network == 'autoencoder':
+    y_est = m.predict({
+    "p1_input": X_p1,
+    "p2_input": X_p2,
+    "p3_input": X_p3,
+    "rel_input": X_rel
+    })[:][0]
+
+# for i,y_ in enumerate(y_est):
+#     print(y_est[i], Y[i])
+print(classification_report(Y, (y_est > 0.95).astype(int)))
 
 
 #empricially estimated thresholds:
