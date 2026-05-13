@@ -5,11 +5,11 @@ from tensorflow.keras.models import Model
 
 
 def create_siamese_model(num_nodes, num_rels):
-#input is not rectangular, we need separate inputs for each path
-    path1_inp = Input(shape=(10,), name="p1 input")
-    path2_inp = Input(shape=(10,), name="p2 input")
-    path3_inp = Input(shape=(10,), name="p3 input")
-    rel_inp = Input(shape=(1,), name="rel input")
+    #input is not rectangular, we need separate inputs for each path
+    path1_inp = Input(shape=(10,), name="p1_input")
+    path2_inp = Input(shape=(10,), name="p2_input")
+    path3_inp = Input(shape=(10,), name="p3_input")
+    rel_inp = Input(shape=(1,), name="rel_input")
     #embedding Layers
     node_embedding = Embedding(input_dim=num_rels, output_dim=300, name="Node_Embedding")
     rel_embedding = Embedding(input_dim=num_rels, output_dim=300, name="Rel_Embedding")

@@ -97,20 +97,38 @@ if network == 'gat':
 if network == 'autoencoder':
     m = create_autoencoder(num_nodes=41, num_rels=41)
 
-try: 
-    m.fit(
-        x={
-            "p1_input": np.array(X_p1),
-            "p2_input": np.array(X_p2),
-            "p3_input": np.array(X_p3),
-            "rel_input": np.array(X_rel)
-        },
-        y=[Y_reshaped, np.array(X_p1), np.array(X_p2), np.array(X_p3)],
-        epochs=3,
-        batch_size=32,
 
-    )
-except Exception as e:
-    print(e)
+if network == 'vae' or network == 'autoencoder':
+    try: 
+        m.fit(
+            x={
+                "p1_input": np.array(X_p1),
+                "p2_input": np.array(X_p2),
+                "p3_input": np.array(X_p3),
+                "rel_input": np.array(X_rel)
+            },
+            y=[Y_reshaped, np.array(X_p1), np.array(X_p2), np.array(X_p3)],
+            epochs=3,
+            batch_size=32,
+
+        )
+    except Exception as e:
+        print(e)
+if network == 'siamese' or network == 'gat':
+    try: 
+        m.fit(
+            x={
+                "p1_input": np.array(X_p1),
+                "p2_input": np.array(X_p2),
+                "p3_input": np.array(X_p3),
+                "rel_input": np.array(X_rel)
+            },
+            y=Y_reshaped,
+            epochs=4,
+            batch_size=32,
+
+        )
+    except Exception as e:
+        print(e)
 
 m.save(f'../../csv/kgs/{experiment}/model_{network}.h5')
